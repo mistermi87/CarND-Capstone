@@ -112,8 +112,6 @@ class TLDetector(object):
         """
         #TODO implement
 
-
-        
         closest_idx = self.waypoint_tree.query([x,y],1)[1]
 
         return closest_idx
@@ -169,7 +167,7 @@ class TLDetector(object):
         
         if closest_light:
             state = self.get_light_state(closest_light)
-            return line_waypoint_idx, state
+            return line_waypoint_idx, 0 #state
 
         return -1, TrafficLight.UNKNOWN
 

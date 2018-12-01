@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!--Waypoint Loader -->
+    <include file="$(find waypoint_loader)/launch/waypoint_loader.launch"/>
+
+
+</launch>
