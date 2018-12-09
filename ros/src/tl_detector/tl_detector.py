@@ -166,7 +166,7 @@ class TLDetector(object):
         
         if closest_light:
             state = self.get_light_state(closest_light)
-            return line_waypoint_idx, TrafficLight.RED #state
+            return line_waypoint_idx, state
 
         return -1, TrafficLight.UNKNOWN
 
