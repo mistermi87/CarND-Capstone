@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="image_listener" type="image_extractor.py" name="image_listener" />
+</launch>

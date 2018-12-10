@@ -1,0 +1,17 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/mm/carnd/devel/include",
+        "/opt/ros/melodic/include",
+        "/home/mm/carnd/src/CarND-Capstone/ros/src/waypoint_follower/include",
+        "/usr/include"
+      ],
+      "name": "Linux"
+    }
+  ]
+}
