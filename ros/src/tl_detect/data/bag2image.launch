@@ -1,0 +1,8 @@
+<launch>
+	<node pkg="rosbag" type="play" name="rosbag" args ="-d 2 /home/student/Documents/traffic_light_bag_file/traffic_light_training.bag"/>
+	<node name="extract" pkg="image_view" type="extract_images" respawn="false" output="screen">
+		<remap from="image" to="/image_color"/>
+		<param name="filename_format" value="/home/student/Documents/traffic_light_bag_file/images/frame%04d.jpg"/>
+	</node>
+</launch>
+

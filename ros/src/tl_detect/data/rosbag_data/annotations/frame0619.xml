@@ -1,0 +1,26 @@
+<annotation>
+	<folder>rosbag_train_images</folder>
+	<filename>frame0619.jpg</filename>
+	<path>/home/mm/carnd/src/CarND-Capstone/imgs/rosbag_train_images/frame0619.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>800</width>
+		<height>600</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Yellow</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>499</xmin>
+			<ymin>102</ymin>
+			<xmax>517</xmax>
+			<ymax>150</ymax>
+		</bndbox>
+	</object>
+</annotation>
