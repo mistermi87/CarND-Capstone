@@ -54,7 +54,7 @@ class WaypointUpdater(object):
 
         # adjusting lookahead and max. decceleration depending on the maximum allowed speed
         global LOOKAHEAD_WPS, MAX_DECEL
-        max_vel = rospy.get_param('/waypoint_loader/velocity', 40.0)    # [m/s]
+        max_vel = rospy.get_param('/waypoint_loader/velocity', 40.0)    # [km/h]
         LOOKAHEAD_WPS = max(20, max_vel)
         MAX_DECEL = max(0.5, min(3, 1.5 * max_vel / 40))
 
