@@ -8,10 +8,10 @@ from lowpass import LowPassFilter
 
 
 class Controller(object):
-    def __init__(self, vehicle_mass,fuel_capacity,
+    def __init__(self, vehicle_mass, fuel_capacity,
                  brake_deadband,decel_limit,accel_limit,
                  wheel_radius,wheel_base,steer_ratio,
-                 max_lat_accel,max_steer_angle ):
+                 max_lat_accel,max_steer_angle):
         # TODO: Implement
         
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
@@ -20,7 +20,7 @@ class Controller(object):
         ki = 0.1
         kd = 0.
         mn = 0.
-        mx = 0.2
+        mx = max(0.1, min(1.0, 0.2 * rospy.get_param('/waypoint_loader/velocity', 40.0) / 40.0))
         self.throttle_controller = PID(kp,ki,kd,mn,mx)
 
         tau = 0.5

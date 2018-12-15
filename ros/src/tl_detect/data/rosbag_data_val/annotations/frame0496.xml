@@ -1,0 +1,26 @@
+<annotation>
+	<folder>rosbag_train_images</folder>
+	<filename>frame0496.jpg</filename>
+	<path>/home/mm/carnd/src/CarND-Capstone/imgs/rosbag_train_images/frame0496.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>800</width>
+		<height>600</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Green</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>390</xmin>
+			<ymin>99</ymin>
+			<xmax>407</xmax>
+			<ymax>142</ymax>
+		</bndbox>
+	</object>
+</annotation>

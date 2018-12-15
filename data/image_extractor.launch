@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-    <node pkg="image_extractor" type="image_extractor.py" name="image_extractor" output="screen" cwd="node"/>
-</launch>
