@@ -1,0 +1,14 @@
+<annotation verified="yes">
+	<folder>sim_image</folder>
+	<filename>frame985.jpg</filename>
+	<path>C:\Users\mstei\Downloads\Capstone\sim_image\frame985.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>800</width>
+		<height>600</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+</annotation>

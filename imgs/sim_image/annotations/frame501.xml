@@ -1,7 +1,7 @@
-<annotation>
+<annotation verified="yes">
 	<folder>sim_image</folder>
 	<filename>frame501.jpg</filename>
-	<path>/home/mm/carnd/src/CarND-Capstone/imgs/sim_image/frame501.jpg</path>
+	<path>C:\Users\mstei\Downloads\Capstone\sim_image\frame501.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -15,36 +15,36 @@
 		<name>Red</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
-		<difficult>0</difficult>
+		<difficult>1</difficult>
 		<bndbox>
-			<xmin>209</xmin>
-			<ymin>437</ymin>
-			<xmax>223</xmax>
-			<ymax>468</ymax>
+			<xmin>316</xmin>
+			<ymin>439</ymin>
+			<xmax>327</xmax>
+			<ymax>465</ymax>
 		</bndbox>
 	</object>
 	<object>
 		<name>Red</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
-		<difficult>0</difficult>
+		<difficult>1</difficult>
 		<bndbox>
-			<xmin>262</xmin>
-			<ymin>436</ymin>
-			<xmax>275</xmax>
-			<ymax>466</ymax>
-		</bndbox>
-	</object>
-	<object>
-		<name>Red</name>
-		<pose>Unspecified</pose>
-		<truncated>0</truncated>
-		<difficult>0</difficult>
-		<bndbox>
-			<xmin>314</xmin>
+			<xmin>261</xmin>
 			<ymin>438</ymin>
-			<xmax>329</xmax>
-			<ymax>469</ymax>
+			<xmax>272</xmax>
+			<ymax>464</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>Red</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>1</difficult>
+		<bndbox>
+			<xmin>208</xmin>
+			<ymin>438</ymin>
+			<xmax>219</xmax>
+			<ymax>464</ymax>
 		</bndbox>
 	</object>
 </annotation>

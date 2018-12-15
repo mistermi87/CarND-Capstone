@@ -1,7 +1,7 @@
-<annotation>
+<annotation verified="yes">
 	<folder>sim_image</folder>
 	<filename>frame1304.jpg</filename>
-	<path>/home/mm/carnd/src/CarND-Capstone/imgs/sim_image/frame1304.jpg</path>
+	<path>C:\Users\mstei\Downloads\Capstone\sim_image\frame1304.jpg</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -17,10 +17,22 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>519</xmin>
-			<ymin>112</ymin>
-			<xmax>570</xmax>
-			<ymax>241</ymax>
+			<xmin>514</xmin>
+			<ymin>111</ymin>
+			<xmax>573</xmax>
+			<ymax>245</ymax>
+		</bndbox>
+	</object>
+	<object>
+		<name>Red</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>775</xmin>
+			<ymin>102</ymin>
+			<xmax>799</xmax>
+			<ymax>243</ymax>
 		</bndbox>
 	</object>
 </annotation>
