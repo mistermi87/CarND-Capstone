@@ -15,6 +15,12 @@ from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
 
+# Skip certain number of images to relieve a developer machine (if needed).
+# If set to False, every image will be used.
+SKIP_IMAGES = False
+
+
+
 class TLDetector(object):
     def __init__(self):
         rospy.init_node('tl_detector')
@@ -54,6 +60,8 @@ class TLDetector(object):
         self.waypoints_2d = None
         self.waypoint_tree = None
 
+        self.image_counter = 0
+
         rospy.spin()
 
     def pose_cb(self, msg):
@@ -78,6 +86,18 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
+
+        # skipping images
+        if SKIP_IMAGES != False:
+
+            self.image_counter += 1
+            if self.image_counter % (SKIP_IMAGES + 1) != 0:
+                return
+
+            # avoiding overflow in the long term: resetting the counter
+            self.image_counter = 0
+
+
         self.has_image = True
         self.camera_image = msg
         light_wp, state = self.process_traffic_lights()
@@ -93,7 +113,7 @@ class TLDetector(object):
             self.state = state
         elif self.state_count >= STATE_COUNT_THRESHOLD:
             self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED else -1
+            light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
             self.last_wp = light_wp
             self.upcoming_red_light_pub.publish(Int32(light_wp))
         else:
@@ -125,6 +145,9 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+        # # for testing
+        # return light.state
+
         if(not self.has_image):
             self.prev_light_loc = None
             return False
