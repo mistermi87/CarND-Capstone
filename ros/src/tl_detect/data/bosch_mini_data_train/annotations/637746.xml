@@ -1,0 +1,47 @@
+<annotaion>
+  <folder>Train_Jpegs</folder>
+  <filename>637746.jpg</filename>
+  <path>D:\Bosch Dataset\Train\Rgb\Train_Jpegs\637746.jpg</path>
+  <size>
+    <width>800</width>
+    <height>600</height>
+    <depth>3</depth>
+  </size>
+  <segmented>0</segmented>
+  <object>
+    <name>Red</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>333.358</xmin>
+      <ymin>202.348</ymin>
+      <xmax>339.98</xmax>
+      <ymax>215.969</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>Red</name>
+    <pose>Unspecified</pose>
+    <occluded>False</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>458.026</xmin>
+      <ymin>236.116</ymin>
+      <xmax>464.079</xmax>
+      <ymax>251.785</ymax>
+    </bndbox>
+  </object>
+  <object>
+    <name>Red</name>
+    <pose>Unspecified</pose>
+    <occluded>True</occluded>
+    <difficult>0</difficult>
+    <bndbox>
+      <xmin>515.083</xmin>
+      <ymin>230.062</ymin>
+      <xmax>522.767</xmax>
+      <ymax>247.538</ymax>
+    </bndbox>
+  </object>
+</annotaion>
