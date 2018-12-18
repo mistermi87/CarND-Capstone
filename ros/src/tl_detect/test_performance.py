@@ -9,6 +9,7 @@ from PIL import ImageFont
 # import time
 import tensorflow as tf
 from scipy.stats import norm
+from __future__ import print_function
 
 print("tensorflow version:", tf.VERSION)
 
@@ -27,7 +28,22 @@ COLOR_LIST = ['lawngreen', 'red', 'yellow'] # list of color to be used for visua
 
 # path to test image directory
 PATH_TO_TEST_IMAGES_DIR = 'data/test_images'
-TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 4) ]
+# TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 4) ]
+
+# Taking every image from that directory
+test_files = []
+all_files = os.listdir(PATH_TO_TEST_IMAGES_DIR)
+for test_file in all_files:
+
+    # Discarding files with the name pattern "[...]_detected.jpg" and "[...]detect.jpg"
+    if not ('_detect.jpg' in test_file or '_detected.jpg' in test_file or 'detect.jpg' in test_file):
+        test_files.append(test_file)
+
+TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, test_file) for test_file in test_files ]
+print("Using {} test images:".format(len(test_files)))
+for test_image in TEST_IMAGE_PATHS:
+    print(test_image)
+
 
 # --------------- Load Frozen Tensorflow Model into Memory. -------------------
 
@@ -151,5 +167,5 @@ for image_path in TEST_IMAGE_PATHS:
         image_draw = draw_boxes(image, box_coords, classes, scores)
 
         # image_draw.show()
-        save_image_path= image_path[:-4]+"detect.jpg"
+        save_image_path = image_path[:-4] + "_detected.jpg"
         image_draw.save(save_image_path)
