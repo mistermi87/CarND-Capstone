@@ -3,25 +3,6 @@
 This markdown explains how to setup and train an object detection model
 by using TensorFlow Object Detection API.
 
-<!-- ### Memo
-- **Dec 13, 2018 (Tatsuo)**: Updated so that the codes works
-with Tensorflow 1.4.0 and the created model runs with
-Tensorflow 1.3.0 (and without `matplotlib`) on
-`object_detection_sdc.ipynb` and `test_performance.py`.
-
-- **Dec 14, 2018 (Tatsuo)**:
-  - `.yml` is changed to `.yaml`.
-  - When creating the conda environment, Python version is
-  specified to `python=2.7`.
-  - Instruction for the setup on AWS added.
-  - yaml file for GPU added (environment_gpu.yaml).  
-
-- **Dec 14, 2018 (ver2, Tatsuo)**:
-  - README files cleaned up for upload on GitHub
-
- -->
-
-
 ### Contents
 
 The contents of the folder `tl_detect` is as follows:
@@ -352,7 +333,7 @@ item corresponding to the job) and run
 kill [job ID]
 ```
 
- - One way to access to tensorboard through AWS is as follows:
+- One way to access to tensorboard through AWS is as follows:
   - First make the 8080 port available for TCP connection. (Set in the security group).
   - Then run (assuming that the model config files etc. are located at `tl_detect/training/model1`)
   ```
