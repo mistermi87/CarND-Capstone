@@ -335,7 +335,7 @@ kill [job ID]
 
 - One way to access to tensorboard through AWS is as follows:
   - First make the 8080 port available for TCP connection. (Set in the security group).
-  - Then run (assuming that the model config files etc. are located at `tl_detect/training/model1`)
+  - Then run (assuming that the model config file etc. are located at `tl_detect/training/model1`)
   ```
   tensorard --logdir=tl_detect/training/model1 --host=0.0.0.0 --port=8080
   ```
