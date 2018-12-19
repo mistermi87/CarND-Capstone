@@ -61,12 +61,12 @@ from the links below:
   with `train_val_generate.ipynb`. For training.
   - [rosbag_data_val](https://drive.google.com/open?id=1AAQv7zRtcdPdQjiNqN3nhOvxo1c_xpcQ): The rest of data (20%). For validation.
 
-- Simulator dataset (**UNDER CONSTRUCTION**)
-  - [sim_data(training + validation)](???): Full data from recorded simulator videos.
+- Simulator dataset (v2, some images with small traffic lights only removed)
+  - [v2_sim_data(training + validation)](https://drive.google.com/open?id=1Gxh9ArVjQa5PnbXfOYhDN1xSJBdKPg8P): Full data from recorded simulator videos.
   New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
-  - [sim_data_train](???): 80% of randomly selected data from the full simulator data
+  - [v2_sim_data_train](https://drive.google.com/open?id=1W-gQS-35IXVyZDISnQOoXILkX0nfj_nD): 80% of randomly selected data from the full simulator data
   with `train_val_generate.ipynb`. For training.
-  - [sim_data_val](???): The rest of data (20%). For validation.
+  - [v2_sim_data_val](https://drive.google.com/open?id=11g2svz3w0JrNj5CorRyCbd7dAbs4lw3Y): The rest of data (20%). For validation.
 
 The pre-trained models for object detection used can be downloaded from
 the following links (Note that we are not using the latest version of the
@@ -85,6 +85,12 @@ download some models after training:
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
   - batch size 5, number of steps 10000 (Dec 14, 2018)
   - data for training: ROS bag dataset with 0.8:0.2 split
+
+-  [trained_model2](https://drive.google.com/open?id=1cVYABl-XhUfM_3NZriDjFnSfUTAKqS76)
+(Dec 19, 2018)
+  - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
+  - batch size 10, number of steps 5000 (Dec 19, 2018)
+  - data for training: v2 sim dataset with 0.8:0.2 split
 
 ### For Training on Local Machine, Outside Udacity Workspace
 
@@ -241,7 +247,7 @@ In case one want to do the same thing without using Jupyter notebook,
 run `test_performance.py` at  `models/research/tl_detect/` instead
 (the code is exactly the same):
 ```
-python `test_performance.py`
+python test_performance.py
 ```
 This `test_perfomrance.py` is designed such that it can run
 on Udacity Workspace with and without GPU.
@@ -329,6 +335,30 @@ Also, `matplotlib` is not installed there...
 
 - In the GPU environment of Udacity Workspace, `tensorflow===1.3.0`
 and `pillow==2.2.1` are used.
+
+- To keep training even when ssh connection to AWS terminates, use
+the following command when submitting a job:
+```
+nohup python [filename, options etc.] &  
+```
+Then the output to the terminal are written to `nohup.out` file.
+To kill the job, first run
+```
+ps -ef | grep python
+```
+and find the ID for the job (I think the leftmost number located in the
+item corresponding to the job) and run
+```
+kill [job ID]
+```
+
+ - One way to access to tensorboard through AWS is as follows:
+  - First make the 8080 port available for TCP connection. (Set in the security group).
+  - Then run (assuming that the model config files etc. are located at `tl_detect/training/model1`)
+  ```
+  tensorard --logdir=tl_detect/training/model1 --host=0.0.0.0 --port=8080
+  ```
+  - Then with a web browser, access to `[external IP of instance]:8080`.
 
 <!-- - The version of TensorFlow must be `tensorflow>=1.9.0`. -->
 
