@@ -163,14 +163,19 @@ class WaypointUpdater(object):
             rospy.logwarn("[waypoints_cb] Maximum allowed veloctiy: {:.2f} km/h ({:.2f} m/s)".format(max_vel_kmh, max_vel_ms))
 
             if ADJUST_DECELERATION:
-                # reference: decelerating by 2 m/s^2 at 40 km/h
+                # Reference value: decelerating by 2 m/s^2 at 40 km/h
+                # A deceleration value will be picked that is linearly proportional to the base value
                 MAX_DECEL = max(0.5, min(3, max_vel_kmh / 20.0) )
                 rospy.logwarn("[waypoints_cb] Using adjusted deceleration: {} m/s^2".format(MAX_DECEL))
 
             if ADJUST_LOOKAHEAD:
                 # s = v^2 / 2*a
+                # Calculating the distance that is needed for the vehicle to slow down from the maximum
+                # allowed velocity to zero, using the given deceleration.
                 brake_distance = max_vel_ms ** 2 / (2*MAX_DECEL)
-                LOOKAHEAD_WPS = max(15, min(150, int(math.ceil(brake_distance / avg_wp_dist))) + 2)
+                # Then we calculate the number of waypoints which are along this distance _on average_
+                # (...plus a few so that the vehicle can certainly stop within the calculated distance.)
+                LOOKAHEAD_WPS = max(15, min(150, int(math.ceil(brake_distance / avg_wp_dist))) + 3)
                 rospy.logwarn("[waypoints_cb] Using adjusted lookahead: {} waypoints".format(LOOKAHEAD_WPS))
 
 
