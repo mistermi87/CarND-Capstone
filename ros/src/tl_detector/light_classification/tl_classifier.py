@@ -3,7 +3,11 @@ from styx_msgs.msg import TrafficLight
 import tensorflow as tf
 import numpy as np
 import cv2
-
+import os
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageColor
+from PIL import ImageFont
 # path to the frozen graph for the trained model
 # PATH_TO_FROZEN_GRAPH = "frozen_inference_graph.pb"
 PATH_TO_FROZEN_GRAPH = "light_classification/frozen_inference_graph.pb"
@@ -11,6 +15,13 @@ PATH_TO_FROZEN_GRAPH = "light_classification/frozen_inference_graph.pb"
 CONFIDENCE_CUTOFF = 0.8
 # the number of classes (red, green, yellow)
 NUM_CLASSES = 3
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = os.path.join('data/', 'label_map_sdc.pbtxt')
+
+# shoud match with the order in label_map_sdc.pbtxt
+CLASSNAME_LIST = ['Green', 'Red', 'Yellow'] # list of class name
+COLOR_LIST = ['lawngreen', 'red', 'yellow'] # list of color to be used for visual purpose below
 
 
 # NOTE
@@ -55,6 +66,7 @@ class TLClassifier(object):
         cv_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) 
         # reshape for input to the trained neural network model
         image_np = np.expand_dims(cv_image, 0)
+        image_pil = Image.fromarray(image)
 
         with tf.Session(graph=self.detection_graph) as sess:
 
@@ -69,6 +81,18 @@ class TLClassifier(object):
             classes = np.squeeze(classes)
             # Filter boxes with a confidence score less than `confidence_cutoff`
             boxes, scores, classes = self.filter_boxes(self.conf_cutoff, boxes, scores, classes)
+
+
+            # The current box coordinates are normalized to a range between 0 and 1.
+            # This converts the coordinates actual location on the image.
+            width, height = image_pil.size
+            box_coords = self.to_image_coords(boxes, height, width)
+
+            # Each class with be represented by a differently colored box
+            image_draw = self.draw_boxes(image_pil, box_coords, classes, scores)
+
+            cv_image_out = np.array(image_draw.getdata(),np.uint8).reshape(image_draw.size[1], image_draw.size[0], 3)
+            #cv_image_out = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)             
 
             # # If doing majority vote, use the following code:
             # scores = []
@@ -96,7 +120,7 @@ class TLClassifier(object):
             else: # if nothing detected, return unknown
                 tl_id = TrafficLight.UNKNOWN
 
-        return tl_id
+        return tl_id, cv_image_out
 
     def filter_boxes(self, min_score, boxes, scores, classes):
         """Return boxes with a confidence >= `min_score`"""
@@ -122,6 +146,52 @@ class TLClassifier(object):
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
         return graph
+
+    def to_image_coords(self,boxes, height, width):
+        """
+        The original box coordinate output is normalized, i.e [0, 1].
+
+        This converts it back to the original coordinate based on the image
+        size.
+        """
+        box_coords = np.zeros_like(boxes)
+        box_coords[:, 0] = boxes[:, 0] * height
+        box_coords[:, 1] = boxes[:, 1] * width
+        box_coords[:, 2] = boxes[:, 2] * height
+        box_coords[:, 3] = boxes[:, 3] * width
+
+        return box_coords
+
+    def load_image_into_numpy_array(self, image):
+        (im_width, im_height) = image.size
+        return np.array(image.getdata()).reshape((im_height, im_width, 3)).astype(np.uint8)
+
+
+    def draw_boxes(self,image, boxes, classes, scores, thickness=4):
+        """Draw bounding boxes on the image"""
+        image_draw = image.copy()
+        draw = ImageDraw.Draw(image_draw)
+        for i in range(len(boxes)):
+            bot, left, top, right = boxes[i, ...]
+            class_id = int(classes[i])
+            color = COLOR_LIST[class_id-1]
+            cls_name = CLASSNAME_LIST[class_id-1]
+            percent = str(round(scores[i] * 100, 1))
+            txt_display = cls_name + ": " + percent + "%"
+            # print(class_id, cls_name, color, txt_display)
+            # draw.rectangle([(left, top-15), (left+80, top-thickness)], fill= color)
+            draw.rectangle([(left-2, bot-15), (left+80, bot)], fill= color)
+            draw.line([(left, top), (left, bot), (right, bot), (right, top), (left, top)], width=thickness, fill=color)
+            draw.text((left, bot-15), txt_display, fill="black")
+        return image_draw
+
+
+    def numpy_array_to_cvimage(self, new_image,num_rows, num_cols):
+        #new_image = np.ndarray((3, num_rows, num_cols), dtype=int)
+        new_image = new_image.astype(np.uint8)
+        new_image_red, new_image_green, new_image_blue = new_image
+        new_rgb = np.dstack([new_image_red, new_image_green, new_image_blue])
+        return new_rgb
 
 # # for check
 # import cv2
