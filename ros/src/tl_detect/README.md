@@ -49,6 +49,11 @@ from the links below:
   with `train_val_generate.ipynb`. For training.
   - [v2_sim_data_val](https://drive.google.com/open?id=11g2svz3w0JrNj5CorRyCbd7dAbs4lw3Y): The rest of data (20%). For validation.
 
+- Simulator dataset (v3, with higher quality images)
+  - [v3_sim_data(training + validation)](https://drive.google.com/open?id=18WRD3xwFsSf60EfzvJt-gX7gGs4y-JfQ): Full data from recorded simulator videos. New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
+  - [v3_sim_data_train](https://drive.google.com/open?id=1bwTjgmaA8wVeczqWbw3j8Iw2glXuoepf): 80% of randomly selected data from the full simulator data with `train_val_generate.ipynb`. For training.
+  - [v3_sim_data_val](https://drive.google.com/open?id=1DJPXnh36ngW33qlmK4Ukk4MFy0S5AIIr): The rest of data (20%). For validation.
+
 The pre-trained models for object detection used can be downloaded from
 the following links (Note that we are not using the latest version of the
 TensorFlow model repository. See the instruction below):
@@ -61,14 +66,12 @@ TensorFlow model repository. See the instruction below):
 For building other parts of this project, here we add some links to
 download some models after training:
 
--  [trained_model1](https://drive.google.com/open?id=1SiyAJYnMG6SOByrzjsitMrnGJ291zo-u)
-(Dec 14, 2018)
+-  [trained_model1](https://drive.google.com/open?id=1SiyAJYnMG6SOByrzjsitMrnGJ291zo-u)(Dec 14, 2018)
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
   - batch size 5, number of steps 10000 (Dec 14, 2018)
   - data for training: ROS bag dataset with 0.8:0.2 split
 
--  [trained_model2](https://drive.google.com/open?id=1cVYABl-XhUfM_3NZriDjFnSfUTAKqS76)
-(Dec 19, 2018)
+-  [trained_model2](https://drive.google.com/open?id=1cVYABl-XhUfM_3NZriDjFnSfUTAKqS76)(Dec 19, 2018)
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
   - batch size 10, number of steps 5000 (Dec 19, 2018)
   - data for training: v2 sim dataset with 0.8:0.2 split
@@ -335,7 +338,7 @@ kill [job ID]
 
 - One way to access to tensorboard through AWS is as follows:
   - First make the 8080 port available for TCP connection. (Set in the security group).
-  - Then run (assuming that the model config file etc. are located at `tl_detect/training/model1`)
+  - Then run (assuming that the model config files etc. are located at `tl_detect/training/model1`)
   ```
   tensorard --logdir=tl_detect/training/model1 --host=0.0.0.0 --port=8080
   ```
