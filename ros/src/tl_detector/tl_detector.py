@@ -53,7 +53,7 @@ class TLDetector(object):
         frozen_graph = rospy.get_param('~frozen_graph', "frozen_inference_graph.pb")
         self.light_classifier = TLClassifier(frozen_graph)
         # running a first inference so that the model gets fully loaded
-        fake_image_data = np.zeros([600, 800, 3])
+        fake_image_data = np.zeros([600, 800, 3], np.uint8)
         _ = self.light_classifier.get_classification(fake_image_data)
 
         self.listener = tf.TransformListener()
