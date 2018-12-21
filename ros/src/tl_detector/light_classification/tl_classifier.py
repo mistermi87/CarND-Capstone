@@ -13,6 +13,7 @@ from PIL import ImageFont
 PATH_TO_FROZEN_GRAPH = "light_classification/frozen_inference_graph.pb"
 # confidence cut-off for detection
 CONFIDENCE_CUTOFF = 0.8
+
 # the number of classes (red, green, yellow)
 NUM_CLASSES = 3
 
@@ -36,10 +37,15 @@ COLOR_LIST = ['lawngreen', 'red', 'yellow'] # list of color to be used for visua
 
 
 class TLClassifier(object):
-    def __init__(self):
+
+    def __init__(self, frozen_graph="frozen_inference_graph.pb"):
+
+        # path to the frozen graph for the trained model
+        PATH_TO_FROZEN_GRAPH = "light_classification/" + frozen_graph
 
         # Load the neural network model for traffic light classification
         self.detection_graph = self.load_graph(PATH_TO_FROZEN_GRAPH)
+
         # The input placeholder for the image.
         # `get_tensor_by_name` returns the Tensor with the associated name in the Graph.
         self.image_tensor = self.detection_graph.get_tensor_by_name('image_tensor:0')

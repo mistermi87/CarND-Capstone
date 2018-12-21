@@ -10,6 +10,7 @@ from light_classification.tl_classifier import TLClassifier
 import tf
 import cv2
 import yaml
+import numpy as np
 
 from scipy.spatial import KDTree
 
@@ -53,9 +54,14 @@ class TLDetector(object):
         self.inference_image = rospy.Publisher('/inference_image',Image, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
-        self.listener = tf.TransformListener()
 
+        frozen_graph = rospy.get_param('~frozen_graph', "frozen_inference_graph.pb")
+        self.light_classifier = TLClassifier(frozen_graph)
+        # running a first inference so that the model gets fully loaded
+        fake_image_data = np.zeros([600, 800, 3], np.uint8)
+        _ = self.light_classifier.get_classification(fake_image_data)
+
+        self.listener = tf.TransformListener()
         self.state = TrafficLight.UNKNOWN
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
