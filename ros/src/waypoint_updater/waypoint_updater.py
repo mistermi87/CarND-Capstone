@@ -51,7 +51,7 @@ class WaypointUpdater(object):
         
         # TODO: Add other member variables you need below
         self.base_waypoints = None
-        self.waypoints_2d = None
+        #self.waypoints_2d = None
         #x, y = np.mgrid[0:1, 0:2]
         #tree = KDTree(list(zip(x.ravel(), y.ravel())))
         self.waypoint_tree = None
