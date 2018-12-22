@@ -188,8 +188,7 @@ def main(_):
         xml = etree.fromstring(xml_str)
 
         # There's a mistyped tag in the dataset which I was working with
-#        data = dataset_util.recursive_parse_xml_to_dict(xml)['annotation']
-        data = dataset_util.recursive_parse_xml_to_dict(xml)['annotaion']
+        data = dataset_util.recursive_parse_xml_to_dict(xml)['annotation']
 
         # to tf.Example format and write to output file
         tf_example = dict_to_tf_example(data, FLAGS.data_dir, label_map_dict,
