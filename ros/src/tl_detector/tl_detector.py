@@ -18,7 +18,7 @@ STATE_COUNT_THRESHOLD = 3
 
 # Skip certain number of images to relieve a developer machine (if needed).
 # If set to False, every image will be used.
-SKIP_IMAGES = False
+SKIP_IMAGES = True
 
 
 
@@ -110,7 +110,7 @@ class TLDetector(object):
         self.camera_image = msg
 
         light_wp, state = self.process_traffic_lights()
-        rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+        #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
         '''
         Publish upcoming red lights at camera frequency.
         Each predicted state has to occur `STATE_COUNT_THRESHOLD` number

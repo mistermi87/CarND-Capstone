@@ -8,6 +8,8 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageColor
 from PIL import ImageFont
+import rospy
+
 # path to the frozen graph for the trained model
 # PATH_TO_FROZEN_GRAPH = "frozen_inference_graph.pb"
 PATH_TO_FROZEN_GRAPH = "light_classification/frozen_inference_graph.pb"
@@ -72,7 +74,7 @@ class TLClassifier(object):
         cv_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) 
         # reshape for input to the trained neural network model
         image_np = np.expand_dims(cv_image, 0)
-        image_pil = Image.fromarray(image)
+        image_pil = Image.fromarray(cv_image)
 
         with tf.Session(graph=self.detection_graph) as sess:
 
@@ -97,8 +99,8 @@ class TLClassifier(object):
             # Each class with be represented by a differently colored box
             image_draw = self.draw_boxes(image_pil, box_coords, classes, scores)
 
-            cv_image_out = np.array(image_draw.getdata(),np.uint8).reshape(image_draw.size[1], image_draw.size[0], 3)
-            #cv_image_out = cv2.cvtColor(image_array, cv2.COLOR_BGR2RGB)             
+            cv_image_out_bgr = np.array(image_draw.getdata(),np.uint8).reshape(image_draw.size[1], image_draw.size[0], 3)
+            cv_image_out_rgb = cv2.cvtColor(cv_image_out_bgr, cv2.COLOR_BGR2RGB)             
 
             # # If doing majority vote, use the following code:
             # scores = []
@@ -125,8 +127,8 @@ class TLClassifier(object):
                 tl_id = (int(classes[max_id]) + 1) % 3
             else: # if nothing detected, return unknown
                 tl_id = TrafficLight.UNKNOWN
-
-        return tl_id, cv_image_out
+        rospy.logwarn("[tl_cllassifier]: tl_id {0}".format(tl_id))
+        return tl_id, cv_image_out_rgb
 
     def filter_boxes(self, min_score, boxes, scores, classes):
         """Return boxes with a confidence >= `min_score`"""
