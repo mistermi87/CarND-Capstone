@@ -9,7 +9,7 @@ from PIL import ImageDraw
 from PIL import ImageColor
 from PIL import ImageFont
 import rospy
-
+import datetime
 # path to the frozen graph for the trained model
 # PATH_TO_FROZEN_GRAPH = "frozen_inference_graph.pb"
 PATH_TO_FROZEN_GRAPH = "light_classification/frozen_inference_graph.pb"
@@ -76,13 +76,15 @@ class TLClassifier(object):
         image_np = np.expand_dims(cv_image, 0)
         image_pil = Image.fromarray(cv_image)
 
-        with tf.Session(graph=self.detection_graph) as sess:
 
+
+        with tf.Session(graph=self.detection_graph) as sess:
+            time_start = datetime.datetime.now()
             # Actual detection.
             (boxes, scores, classes) = sess.run([self.detection_boxes, self.detection_scores,
                                                     self.detection_classes],
                                                     feed_dict={self.image_tensor: image_np})
-
+            time_finish = datetime.datetime.now()
             # Remove unnecessary dimensions
             boxes = np.squeeze(boxes)
             scores = np.squeeze(scores)
@@ -127,7 +129,9 @@ class TLClassifier(object):
                 tl_id = (int(classes[max_id]) + 1) % 3
             else: # if nothing detected, return unknown
                 tl_id = TrafficLight.UNKNOWN
-        rospy.logwarn("[tl_cllassifier]: tl_id {0}".format(tl_id))
+        
+        time_processing = time_finish - time_start
+        #rospy.logwarn("[tl_cllassifier]: tl_id {0} Time: {1} ".format(tl_id, time_processing))
         return tl_id, cv_image_out_rgb
 
     def filter_boxes(self, min_score, boxes, scores, classes):

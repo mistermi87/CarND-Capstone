@@ -12,6 +12,7 @@ import cv2
 import yaml
 import numpy as np
 
+import datetime
 from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
@@ -80,8 +81,13 @@ class TLDetector(object):
         if not self.waypoints_2d:
                 self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints ]
                 #rospy.logwarn("Waypoints_2d: {0}".format(self.waypoints_2d))
+                time_start = datetime.datetime.now()
                 self.waypoint_tree = KDTree(self.waypoints_2d)
-                #rospy.logwarn("waypoint_tree: {0}".format(self.waypoint_tree))        
+                #rospy.logwarn("waypoint_tree: {0}".format(self.waypoint_tree))   
+                time_finish = datetime.datetime.now()
+
+                time_processing = time_finish - time_start
+                rospy.logwarn("[tl_detector]: Time: {0} ".format(time_processing))     
 
     def traffic_cb(self, msg):
         self.lights = msg.lights

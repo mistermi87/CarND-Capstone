@@ -7,7 +7,7 @@ from std_msgs.msg import Int32
 from scipy.spatial import KDTree
 import numpy as np
 import math
-
+import datetime
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
 
@@ -152,8 +152,12 @@ class WaypointUpdater(object):
         if not self.waypoints_2d:
 
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints ]
+            time_start = datetime.datetime.now()
             self.waypoint_tree = KDTree(self.waypoints_2d)
+            time_finish = datetime.datetime.now()
 
+            time_processing = time_finish - time_start
+            rospy.logwarn("[waypoint_updater]: Time: {0} ".format(time_processing))
             # Calculating the distance between each two consecutive waypoints and storing them
             sum_dist = 0
             self.waypoint_distances = []
@@ -193,7 +197,7 @@ class WaypointUpdater(object):
                 # (...plus a few so that the vehicle can certainly stop within the calculated distance.)
                 waypoint_count = int(math.ceil(brake_distance / avg_wp_dist))
                 safety = int(math.ceil(1.3 * max_vel_kmh / 20.0)) + 2
-                LOOKAHEAD_WPS = max(15, min(150, waypoint_count + safety))
+                LOOKAHEAD_WPS = max(15, min(50, waypoint_count + safety))
                 rospy.logwarn("[waypoints_cb] Using adjusted lookahead: {} waypoints".format(LOOKAHEAD_WPS))
 
 
