@@ -192,7 +192,7 @@ class WaypointUpdater(object):
                 # Then we calculate the number of waypoints which are along this distance _on average_
                 # (...plus a few so that the vehicle can certainly stop within the calculated distance.)
                 waypoint_count = int(math.ceil(brake_distance / avg_wp_dist))
-                safety = int(math.ceil(1.2 * max_vel_kmh / 20.0)) + 1
+                safety = int(math.ceil(1.3 * max_vel_kmh / 20.0)) + 2
                 LOOKAHEAD_WPS = max(15, min(150, waypoint_count + safety))
                 rospy.logwarn("[waypoints_cb] Using adjusted lookahead: {} waypoints".format(LOOKAHEAD_WPS))
 
