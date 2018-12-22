@@ -1,4 +1,4 @@
-<annotaion>
+<annotation>
   <folder>Train_Jpegs</folder>
   <filename>29500.jpg</filename>
   <path>D:\Bosch Dataset\Train\Rgb\Train_Jpegs\29500.jpg</path>
@@ -32,4 +32,4 @@
       <ymax>297.186</ymax>
     </bndbox>
   </object>
-</annotaion>
+</annotation>
