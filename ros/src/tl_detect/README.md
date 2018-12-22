@@ -66,15 +66,30 @@ TensorFlow model repository. See the instruction below):
 For building other parts of this project, here we add some links to
 download some models after training:
 
--  [trained_model1](https://drive.google.com/open?id=1SiyAJYnMG6SOByrzjsitMrnGJ291zo-u)(Dec 14, 2018)
+- [traine_model1](https://drive.google.com/open?id=12e6ycV7gESCvYIjQxgmpT5yXtg3M44VH)
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
-  - batch size 5, number of steps 10000 (Dec 14, 2018)
+  - batch size 5, number of steps 10000
   - data for training: ROS bag dataset with 0.8:0.2 split
 
--  [trained_model2](https://drive.google.com/open?id=1cVYABl-XhUfM_3NZriDjFnSfUTAKqS76)(Dec 19, 2018)
+- [traine_model2](https://drive.google.com/open?id=1z217UpqzqNzj4qhWiTDk9Og8vJNIGOAG)
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
-  - batch size 10, number of steps 5000 (Dec 19, 2018)
+  - batch size 10, number of steps 5000
   - data for training: v2 sim dataset with 0.8:0.2 split
+
+- [traine_model3](https://drive.google.com/open?id=1uPqPhCpg4xYkql2HMBtgX-YR_17FLlcU)
+  - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
+  - batch size 24, number of steps 20000
+  - data for training: Bosch mini dataset + ROS bag dataset with 0.8:0.2 split
+
+- [traine_model4](https://drive.google.com/open?id=1x-oo5m5JfXABM9vY3ZYho8wdvLIwCQPO)
+  - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
+  - batch size 24, number of steps 10000
+  - data for training: sim dataset with 0.8:0.2 split
+
+- [traine_model5](https://drive.google.com/open?id=1SNH_i8_SDsncCnsm75lmFcjesvLkjzjM)
+  - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
+  - batch size 48, number of steps 7000
+  - data for training: v2 sim dataset + v3 sim dataset with 0.8:0.2 split
 
 ### For Training on Local Machine, Outside Udacity Workspace
 
