@@ -36,23 +36,33 @@ The datasets for building traffic light detection models can be downloaded
 from the links below:
 
 - ROS bag dataset
-  - [rosbag_data](https://drive.google.com/open?id=1sEXrzjLgBEjWGV2igexEtHGzDsaxFsdF): Full data from the ROS bag video.
+  - [rosbag_data](https://drive.google.com/open?id=1DPBC9hYdNKK-df3R9-aFe9RLV3hcSFZd): Full data from the ROS bag video.
   New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
-  - [rosbag_data_train](https://drive.google.com/open?id=1yWSGbh7mgTuUCO5u4CZ-OMXFaEF1B4_w): 80% of randomly selected data from the full ROS bag data
+  - [rosbag_data_train](https://drive.google.com/open?id=1v7C44_lVsej3NDXe7XqUJISeXxNYWkDi): 80% of randomly selected data from the full ROS bag data
   with `train_val_generate.ipynb`. For training.
-  - [rosbag_data_val](https://drive.google.com/open?id=1AAQv7zRtcdPdQjiNqN3nhOvxo1c_xpcQ): The rest of data (20%). For validation.
+  - [rosbag_data_val](https://drive.google.com/open?id=1dMS-Ivtw3xtnZhq8aVHgJtI45SQ-ptoB): The rest of data (20%). For validation.
+
+- BOSCH mini dataset
+  - [bosch_mini_data](https://drive.google.com/open?id=1X2zsH4gw1nWlHneNvqJ3wpibGTsJ3QkD): Extracted and resized version of [BOSCH small traffic light dataset](https://hci.iwr.uni-heidelberg.de/node/6132). New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
+  - [bosch_mini_data_train](https://drive.google.com/open?id=1OZGlo_08p2zA8LYwddWslJCoc7LKgXsb): 80% of randomly selected data from the full ROS bag data with `train_val_generate.ipynb`. For training.
+  - [bosch_mini_data_val](https://drive.google.com/open?id=19xBRHdauD4MJ7wv0UJafJ3zgiw5vYwD6): The rest of data (20%). For validation.
+
+- Simulator dataset (v1)
+  - [sim_data(training + validation)](https://drive.google.com/open?id=1Wp2h4v-03iyccQWTNi86QOQjChmSQJil): Full data from recorded simulator videos. New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
+  - [sim_data_train](https://drive.google.com/open?id=1LZrAC5Nb8VpyPYy2OtdUSw8aUr-6kuA7): 80% of randomly selected data from the full simulator data with `train_val_generate.ipynb`. For training.
+  - [sim_data_val](https://drive.google.com/open?id=1XGthmZIG4WU90bUU4qb8Ysi1dyguDvR_): The rest of data (20%). For validation.
 
 - Simulator dataset (v2, some images with small traffic lights only removed)
-  - [v2_sim_data(training + validation)](https://drive.google.com/open?id=1Gxh9ArVjQa5PnbXfOYhDN1xSJBdKPg8P): Full data from recorded simulator videos.
+  - [v2_sim_data(training + validation)](https://drive.google.com/open?id=1pbw11tYZWGGC-wEDNdHBvfJUnR8xqy5B): Full data from recorded simulator videos.
   New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
-  - [v2_sim_data_train](https://drive.google.com/open?id=1W-gQS-35IXVyZDISnQOoXILkX0nfj_nD): 80% of randomly selected data from the full simulator data
+  - [v2_sim_data_train](https://drive.google.com/open?id=1qCBN0W5a-Xxl6t9h6VOJ4FPD4ItkkExw): 80% of randomly selected data from the full simulator data
   with `train_val_generate.ipynb`. For training.
-  - [v2_sim_data_val](https://drive.google.com/open?id=11g2svz3w0JrNj5CorRyCbd7dAbs4lw3Y): The rest of data (20%). For validation.
+  - [v2_sim_data_val](https://drive.google.com/open?id=1VZ_wtj1tiKUVrF7P_sPu2FXaxLpqARBK): The rest of data (20%). For validation.
 
 - Simulator dataset (v3, with higher quality images)
-  - [v3_sim_data(training + validation)](https://drive.google.com/open?id=18WRD3xwFsSf60EfzvJt-gX7gGs4y-JfQ): Full data from recorded simulator videos. New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
-  - [v3_sim_data_train](https://drive.google.com/open?id=1bwTjgmaA8wVeczqWbw3j8Iw2glXuoepf): 80% of randomly selected data from the full simulator data with `train_val_generate.ipynb`. For training.
-  - [v3_sim_data_val](https://drive.google.com/open?id=1DJPXnh36ngW33qlmK4Ukk4MFy0S5AIIr): The rest of data (20%). For validation.
+  - [v3_sim_data(training + validation)](https://drive.google.com/open?id=1aDybL-I0XeAIIBJ7oW2OBEgUkmgJ6ypF): Full data from recorded simulator videos. New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
+  - [v3_sim_data_train](https://drive.google.com/open?id=1wxwH-OLAyqCjC-H5pP5-KL2wYgZzFGk8): 80% of randomly selected data from the full simulator data with `train_val_generate.ipynb`. For training.
+  - [v3_sim_data_val](https://drive.google.com/open?id=1uoX6yWZPLuvEgoNsPwrVB-Cucoi9hcYG): The rest of data (20%). For validation.
 
 The pre-trained models for object detection used can be downloaded from
 the following links (Note that we are not using the latest version of the
