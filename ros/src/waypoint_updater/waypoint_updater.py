@@ -44,7 +44,7 @@ class WaypointUpdater(object):
         self.waypoint_tree = None
         self.stopline_waypoint_idx = -1
         self.waypoint_distances = None
-        self.waypoint_distances_calculated = False
+        self.waypoint_distances_precomputed = False
 
         # Subscribing to interesting topics
         rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
@@ -62,7 +62,7 @@ class WaypointUpdater(object):
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             #if self.pose and self.base_waypoints :
-            if self.pose and self.waypoint_distances_calculated: # self.base_lane:
+            if self.pose and self.waypoint_distances_precomputed: # self.base_lane:
                 self.publish_waypoints()
                 #closest_waypoint_idx = self.get_closest_waypoint_idx()
                 #self.publish_waypoints(closest_waypoint_idx)
@@ -171,7 +171,7 @@ class WaypointUpdater(object):
 
             # Calculating average distance + signalizing the end of the operation
             avg_wp_dist = sum_dist / nr_of_segments
-            self.waypoint_distances_calculated = True
+            self.waypoint_distances_precomputed = True
 
             rospy.logwarn("[waypoints_cb] Total track length: {:.2f} meters over {} waypoints".format(sum_dist, nr_of_segments))
             rospy.logwarn("[waypoints_cb] Average distance between the waypoints: {:.3f} meters".format(avg_wp_dist))
@@ -221,7 +221,7 @@ class WaypointUpdater(object):
 
     def distance(self, waypoints, wp1, wp2, base_idx=0):
         dist = 0
-        if self.waypoint_distances_calculated:
+        if self.waypoint_distances_precomputed:
             for i in range(wp1, wp2):
                 dist += self.waypoint_distances[base_idx + i]
 
