@@ -123,7 +123,7 @@ class WaypointUpdater(object):
             p = Waypoint()
             p.pose = wp.pose
 
-            stop_idx = max(self.stopline_waypoint_idx - closest_idx - 2, 0)
+            stop_idx = max(self.stopline_waypoint_idx - closest_idx - 4, 0)
 
             # Calculating the distance only in case the target is still ahead of the current waypoint
             dist = 0
@@ -196,7 +196,7 @@ class WaypointUpdater(object):
                 # Then we calculate the number of waypoints which are along this distance _on average_
                 # (...plus a few so that the vehicle can certainly stop within the calculated distance.)
                 waypoint_count = int(math.ceil(brake_distance / avg_wp_dist))
-                safety_reserve = int(math.ceil(1.4 * max_vel_kmh / 20.0)) + 3
+                safety_reserve = int(math.ceil(1.5 * max_vel_kmh / 20.0)) + 4
                 LOOKAHEAD_WPS = max(15, min(150, waypoint_count + safety_reserve))
                 rospy.logwarn("[waypoints_cb] Using adjusted lookahead: {} waypoints".format(LOOKAHEAD_WPS))
 
