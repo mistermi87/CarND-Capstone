@@ -36,14 +36,14 @@ The datasets for building traffic light detection models can be downloaded
 from the links below:
 
 - ROS bag dataset
-  - [rosbag_data](https://drive.google.com/open?id=1DPBC9hYdNKK-df3R9-aFe9RLV3hcSFZd): Full data from the ROS bag video.
+  - [rosbag_data(training + validation)](https://drive.google.com/open?id=1DPBC9hYdNKK-df3R9-aFe9RLV3hcSFZd): Full data from the ROS bag video.
   New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
   - [rosbag_data_train](https://drive.google.com/open?id=1v7C44_lVsej3NDXe7XqUJISeXxNYWkDi): 80% of randomly selected data from the full ROS bag data
   with `train_val_generate.ipynb`. For training.
   - [rosbag_data_val](https://drive.google.com/open?id=1dMS-Ivtw3xtnZhq8aVHgJtI45SQ-ptoB): The rest of data (20%). For validation.
 
 - BOSCH mini dataset
-  - [bosch_mini_data](https://drive.google.com/open?id=1X2zsH4gw1nWlHneNvqJ3wpibGTsJ3QkD): Extracted and resized version of [BOSCH small traffic light dataset](https://hci.iwr.uni-heidelberg.de/node/6132). New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
+  - [bosch_mini_data(training + validation)](https://drive.google.com/open?id=1X2zsH4gw1nWlHneNvqJ3wpibGTsJ3QkD): Extracted and resized version of [BOSCH small traffic light dataset](https://hci.iwr.uni-heidelberg.de/node/6132). New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
   - [bosch_mini_data_train](https://drive.google.com/open?id=1OZGlo_08p2zA8LYwddWslJCoc7LKgXsb): 80% of randomly selected data from the full ROS bag data with `train_val_generate.ipynb`. For training.
   - [bosch_mini_data_val](https://drive.google.com/open?id=19xBRHdauD4MJ7wv0UJafJ3zgiw5vYwD6): The rest of data (20%). For validation.
 
@@ -76,32 +76,32 @@ TensorFlow model repository. See the instruction below):
 For building other parts of this project, here we add some links to
 download some models after training:
 
-- [traine_model1](https://drive.google.com/open?id=12e6ycV7gESCvYIjQxgmpT5yXtg3M44VH)
+- [trained_model1](https://drive.google.com/open?id=12e6ycV7gESCvYIjQxgmpT5yXtg3M44VH)
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
   - batch size 5, number of steps 10000
   - data for training: ROS bag dataset with 0.8:0.2 split
 
-- [traine_model2](https://drive.google.com/open?id=1z217UpqzqNzj4qhWiTDk9Og8vJNIGOAG)
+- [trained_model2](https://drive.google.com/open?id=1z217UpqzqNzj4qhWiTDk9Og8vJNIGOAG)
   - pre-trained model: `faster_rcnn_inception_v2_coco_2017_11_08.tar.gz`
   - batch size 10, number of steps 5000
   - data for training: v2 sim dataset with 0.8:0.2 split
 
-- [traine_model3](https://drive.google.com/open?id=1uPqPhCpg4xYkql2HMBtgX-YR_17FLlcU)
+- [trained_model3](https://drive.google.com/open?id=1uPqPhCpg4xYkql2HMBtgX-YR_17FLlcU)
   - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
   - batch size 24, number of steps 20000
   - data for training: Bosch mini dataset + ROS bag dataset with 0.8:0.2 split
 
-- [traine_model4](https://drive.google.com/open?id=1x-oo5m5JfXABM9vY3ZYho8wdvLIwCQPO)
+- [trained_model4](https://drive.google.com/open?id=1x-oo5m5JfXABM9vY3ZYho8wdvLIwCQPO)
   - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
   - batch size 24, number of steps 10000
   - data for training: sim dataset with 0.8:0.2 split
 
-- [traine_model5](https://drive.google.com/open?id=1SNH_i8_SDsncCnsm75lmFcjesvLkjzjM)
+- [trained_model5](https://drive.google.com/open?id=1SNH_i8_SDsncCnsm75lmFcjesvLkjzjM)
   - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
   - batch size 48, number of steps 7000
   - data for training: v2 sim dataset + v3 sim dataset with 0.8:0.2 split
 
-- [traine_model6](https://drive.google.com/open?id=18yo1Tmq9_w1zASa5V-KkACfcgRW1a6vw)
+- [trained_model6](https://drive.google.com/open?id=18yo1Tmq9_w1zASa5V-KkACfcgRW1a6vw)
   - pre-trained model: `ssd_mobilenet_v1_coco_2017_11_17.tar.gz`
   - batch size 24, number of steps 12000
   - data for training: sim dataset + v2 sim dataset + v3 sim dataset with 0.8:0.2 split
@@ -370,7 +370,7 @@ kill [job ID]
   - First make the 8080 port available for TCP connection. (Set in the security group).
   - Then run (assuming that the model config files etc. are located at `tl_detect/training/model1`)
   ```
-  tensorard --logdir=tl_detect/training/model1 --host=0.0.0.0 --port=8080
+  tensorboard --logdir=tl_detect/training/model1 --host=0.0.0.0 --port=8080
   ```
   - Then with a web browser, access to `[external IP of instance]:8080`.
 
