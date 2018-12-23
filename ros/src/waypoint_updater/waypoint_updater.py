@@ -123,7 +123,7 @@ class WaypointUpdater(object):
             p = Waypoint()
             p.pose = wp.pose
 
-            stop_idx = max(self.stopline_waypoint_idx - closest_idx - 4, 0)
+            stop_idx = max(self.stopline_waypoint_idx - closest_idx - 5, 0)
 
             # Calculating the distance only in case the target is still ahead of the current waypoint
             dist = 0
