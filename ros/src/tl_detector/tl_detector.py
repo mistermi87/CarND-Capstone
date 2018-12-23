@@ -117,6 +117,11 @@ class TLDetector(object):
 
         light_wp, state = self.process_traffic_lights()
         #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+
+        # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
+        if state == TrafficLight.YELLOW:
+            state = TrafficLight.RED
+
         '''
         Publish upcoming red lights at camera frequency.
         Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
