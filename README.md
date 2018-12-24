@@ -73,7 +73,7 @@ roslaunch launch/site.launch
 ```
 5. Confirm that traffic light detection works on real life images
 
-TEAM ROSCAR
+###TEAM ROSCAR
 
 LEAD: 
 Marcus Manning manufacturevn@gmail.com
