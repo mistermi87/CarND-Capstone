@@ -21,10 +21,6 @@ STATE_COUNT_THRESHOLD = 3
 # If set to False, every image will be used.
 # SKIP_IMAGES = True
 
-# Semaphor limit
-MAX_WORKERS = 1
-
-
 class TLDetector(object):
 
     def __init__(self):
@@ -50,7 +46,7 @@ class TLDetector(object):
         rely on the position of the light and the camera image to predict it.
         '''
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, buff_size=10*1440000, queue_size=1)
+        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=10*800*600*3)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -76,7 +72,7 @@ class TLDetector(object):
         # self.image_counter = 0
 
         # Our semaphor. A "worker" is an image processing unit/module (here: function)
-        self.worker_count = 0
+        # self.worker_count = 0
 
         rospy.spin()
 
@@ -122,43 +118,36 @@ class TLDetector(object):
         #     # avoiding overflow in the long term: resetting the counter
         #     self.image_counter = 0
 
-        # Let's see that semaphor (DIY "test-and-set" :-/ )
-        self.worker_count += 1
-        if self.worker_count <= MAX_WORKERS:
+        self.has_image = True
+        self.camera_image = msg
 
-            self.has_image = True
-            self.camera_image = msg
+        light_wp, state = self.process_traffic_lights()
+        #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
 
-            light_wp, state = self.process_traffic_lights()
-            #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+        # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
+        if state == TrafficLight.YELLOW:
+            state = TrafficLight.RED
 
-            # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
-            if state == TrafficLight.YELLOW:
-                state = TrafficLight.RED
+        '''
+        Publish upcoming red lights at camera frequency.
+        Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
+        of times till we start using it. Otherwise the previous stable state is
+        used.
+        '''
+        if self.state != state:
+            self.state_count = 0
+            self.state = state
 
-            '''
-            Publish upcoming red lights at camera frequency.
-            Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
-            of times till we start using it. Otherwise the previous stable state is
-            used.
-            '''
-            if self.state != state:
-                self.state_count = 0
-                self.state = state
+        elif self.state_count >= STATE_COUNT_THRESHOLD:
+            self.last_state = self.state
+            light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
+            self.last_wp = light_wp
+            self.upcoming_red_light_pub.publish(Int32(light_wp))
 
-            elif self.state_count >= STATE_COUNT_THRESHOLD:
-                self.last_state = self.state
-                light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
-                self.last_wp = light_wp
-                self.upcoming_red_light_pub.publish(Int32(light_wp))
+        else:
+            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
 
-            else:
-                self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-
-            self.state_count += 1
-
-        # Releasing the semaphor
-        self.worker_count -= 1
+        self.state_count += 1
 
 
     def get_closest_waypoint(self, x, y):
