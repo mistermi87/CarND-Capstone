@@ -69,10 +69,7 @@ class TLDetector(object):
         self.state_count = 0
 
         # Conter for image skipping
-        # self.image_counter = 0
-
-        # Our semaphor. A "worker" is an image processing unit/module (here: function)
-        # self.worker_count = 0
+        self.image_counter = 0
 
         rospy.spin()
 
