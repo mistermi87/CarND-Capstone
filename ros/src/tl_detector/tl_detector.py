@@ -19,7 +19,7 @@ STATE_COUNT_THRESHOLD = 3
 
 # Skip certain number of images to relieve a developer machine (if needed).
 # If set to False, every image will be used.
-# SKIP_IMAGES = True
+SKIP_IMAGES = 2
 
 class TLDetector(object):
 
@@ -46,7 +46,7 @@ class TLDetector(object):
         rely on the position of the light and the camera image to predict it.
         '''
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=10*800*600*3)
+        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=20*800*600*3)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
@@ -108,15 +108,15 @@ class TLDetector(object):
 
         """
 
-        # # skipping images
-        # if SKIP_IMAGES != False:
+        # skipping images
+        if SKIP_IMAGES != False:
 
-        #     self.image_counter += 1
-        #     if self.image_counter % (SKIP_IMAGES + 1) != 0:
-        #         return
+            self.image_counter += 1
+            if self.image_counter % (SKIP_IMAGES + 1) != 0:
+                return
 
-        #     # avoiding overflow in the long term: resetting the counter
-        #     self.image_counter = 0
+            # avoiding overflow in the long term: resetting the counter
+            self.image_counter = 0
 
         self.has_image = True
         self.camera_image = msg
