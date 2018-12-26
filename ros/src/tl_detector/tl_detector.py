@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import logging
 
 
 import rospy
@@ -19,16 +18,16 @@ import numpy as np
 import datetime
 from scipy.spatial import KDTree
 
-STATE_COUNT_THRESHOLD = 2
+STATE_COUNT_THRESHOLD = 3
 
 # Skip certain number of images to relieve a developer machine (if needed).
 # If set to False, every image will be used.
-SKIP_IMAGES = 3
+SKIP_IMAGES = 1
 
 class TLDetector(object):
 
     def __init__(self):
-        logging.getLogger('tensorflow').disabled = True
+
         rospy.init_node('tl_detector')
 
         self.waypoints_2d = None
