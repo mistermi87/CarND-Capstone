@@ -9,7 +9,6 @@ from PIL import ImageFont
 # import time
 import tensorflow as tf
 from scipy.stats import norm
-from __future__ import print_function
 
 print("tensorflow version:", tf.VERSION)
 
@@ -137,6 +136,7 @@ detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
 # The classification of the object (integer id).
 detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
 
+sess = tf.Session(graph=detection_graph)
 
 for image_path in TEST_IMAGE_PATHS:
 
@@ -144,28 +144,27 @@ for image_path in TEST_IMAGE_PATHS:
     image = Image.open(image_path)
     image_np = np.expand_dims(np.asarray(image, dtype=np.uint8), 0)
 
-    with tf.Session(graph=detection_graph) as sess:
-        # Actual detection.
-        (boxes, scores, classes) = sess.run([detection_boxes, detection_scores, detection_classes],
-                                            feed_dict={image_tensor: image_np})
+    # Actual detection.
+    (boxes, scores, classes) = sess.run([detection_boxes, detection_scores, detection_classes],
+                                        feed_dict={image_tensor: image_np})
 
-        # Remove unnecessary dimensions
-        boxes = np.squeeze(boxes)
-        scores = np.squeeze(scores)
-        classes = np.squeeze(classes)
+    # Remove unnecessary dimensions
+    boxes = np.squeeze(boxes)
+    scores = np.squeeze(scores)
+    classes = np.squeeze(classes)
 
-        confidence_cutoff = 0.8 # 0.8
-        # Filter boxes with a confidence score less than `confidence_cutoff`
-        boxes, scores, classes = filter_boxes(confidence_cutoff, boxes, scores, classes)
+    confidence_cutoff = 0.8 # 0.8
+    # Filter boxes with a confidence score less than `confidence_cutoff`
+    boxes, scores, classes = filter_boxes(confidence_cutoff, boxes, scores, classes)
 
-        # The current box coordinates are normalized to a range between 0 and 1.
-        # This converts the coordinates actual location on the image.
-        width, height = image.size
-        box_coords = to_image_coords(boxes, height, width)
+    # The current box coordinates are normalized to a range between 0 and 1.
+    # This converts the coordinates actual location on the image.
+    width, height = image.size
+    box_coords = to_image_coords(boxes, height, width)
 
-        # Each class with be represented by a differently colored box
-        image_draw = draw_boxes(image, box_coords, classes, scores)
+    # Each class with be represented by a differently colored box
+    image_draw = draw_boxes(image, box_coords, classes, scores)
 
-        # image_draw.show()
-        save_image_path = image_path[:-4] + "_detected.jpg"
-        image_draw.save(save_image_path)
+    # image_draw.show()
+    save_image_path = image_path[:-4] + "_detected.jpg"
+    image_draw.save(save_image_path)
