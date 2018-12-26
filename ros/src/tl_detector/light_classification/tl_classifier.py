@@ -85,60 +85,61 @@ class TLClassifier(object):
         """
 
         # NOTE: here I assume that image is in np.array format
-        cv_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) 
+        cv_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         # reshape for input to the trained neural network model
         image_np = np.expand_dims(cv_image, 0)
         image_pil = Image.fromarray(cv_image)
 
-        (boxes, scores, classes) = self.run_session(image_np)
-
-
+        # Actual detection + measuring execution time
         time_start = datetime.datetime.now()
-            # Actual detection.
-
+        (boxes, scores, classes) = self.run_session(image_np)
         time_finish = datetime.datetime.now()
-            # Remove unnecessary dimensions
+
+        # Remove unnecessary dimensions
         boxes = np.squeeze(boxes)
         scores = np.squeeze(scores)
         classes = np.squeeze(classes)
-            # Filter boxes with a confidence score less than `confidence_cutoff`
+
+        # Filter boxes with a confidence score less than `confidence_cutoff`
         boxes, scores, classes = self.filter_boxes(self.conf_cutoff, boxes, scores, classes)
 
 
-            # The current box coordinates are normalized to a range between 0 and 1.
-            # This converts the coordinates actual location on the image.
+        # The current box coordinates are normalized to a range between 0 and 1.
+        # This converts the coordinates actual location on the image.
         width, height = image_pil.size
         box_coords = self.to_image_coords(boxes, height, width)
 
-            # Each class with be represented by a differently colored box
+        # Each class with be represented by a differently colored box
         image_draw = self.draw_boxes(image_pil, box_coords, classes, scores)
 
         cv_image_out_bgr = np.array(image_draw.getdata(),np.uint8).reshape(image_draw.size[1], image_draw.size[0], 3)
         cv_image_out_rgb = cv2.cvtColor(cv_image_out_bgr, cv2.COLOR_BGR2RGB)             
 
-            # # If doing majority vote, use the following code:
-            # scores = []
-            # classes =[]
-            # if(len(classes) >0):
-            #     classes = [int(cl) for cl in classes]
-            #     class_count = []
-            #     for id in range(1, 1+NUM_CLASSES):
-            #         class_count.append(classes.count(id))
-            #     max_count = max(class_count)
-            #
-            #     if(class_count.count(max_count) == 1): # if unique majority
-            #         tl_id =  (class_count.index(max_count) + 1 + 1) % 3
-            #     else: # if multiple classes tie, use the max score instead
-            #         max_id = list(scores).index(max(scores))
-            #         tl_id = (int(classes[max_id]) + 1) % 3
-            # else:
-            #     tl_id = TrafficLight.UNKNOWN
+        # # If doing majority vote, use the following code:
+        # scores = []
+        # classes =[]
+        # if(len(classes) >0):
+        #     classes = [int(cl) for cl in classes]
+        #     class_count = []
+        #     for id in range(1, 1+NUM_CLASSES):
+        #         class_count.append(classes.count(id))
+        #     max_count = max(class_count)
+        #
+        #     if(class_count.count(max_count) == 1): # if unique majority
+        #         tl_id =  (class_count.index(max_count) + 1 + 1) % 3
+        #     else: # if multiple classes tie, use the max score instead
+        #         max_id = list(scores).index(max(scores))
+        #         tl_id = (int(classes[max_id]) + 1) % 3
+        # else:
+        #     tl_id = TrafficLight.UNKNOWN
 
-            # If simpliy choosing the one with the highest score use below.
-            # If one or more lights detected, select the class with the highest score
+        # If simpliy choosing the one with the highest score use below.
+        # If one or more lights detected, select the class with the highest score
         if(len(classes) > 0):
             max_id = list(scores).index(max(scores))
             tl_id = (int(classes[max_id]) + 1) % 3
+
         else: # if nothing detected, return unknown
             tl_id = TrafficLight.UNKNOWN
         
