@@ -9,6 +9,7 @@ into TFRecord format.
 This data folder contains the followings:
 
 - `create_pascal_tf_record_sdc.py`: Python code for converting from Pascal VOC to TFRecord.
+- `create_pascal_tf_record_sdc.bosch_mini.py`: Python code for converting from Pascal VOC to TFRecord for Bosch mini dataset.
 - `label_map_sdc.pbtxt`: This file is used for mapping class labels ("Green", "Red", "Yellow")
 to integer ids (1, 2, 3).
 - `bag2image.launch`: This file can be used for creating jpeg images from a ROS bag data.
@@ -19,37 +20,13 @@ to images and resizing them.
 - `test_images`: Put test images here when running `test_performance.py` to
 see how the trained model works. The results with bounding boxes are also stored
 here after the run.
-
-<!-- - `rosbag_data`: Folder containing all the ROS bag data4.
-- `rosbag_data_train`: Folder for the training set created from the ROS bag data.
-- `rosbag_data_train/images`: This folder contains images in jpeg format.
-- `rosbag_data_train/annotations`: This folder contains xml files containing label info of images.
-- `rosbag_data_train/filename_list.txt`: This text file contain a list of image file
-names without the file extension `.jpeg` (or equivalently a list of xml filenames without the extension `.xml`)
-- `rosbag_data_train/rosbag_data_train.record`: This TFRecord file is the output obtained by running `create_pascal_tf_record_sdc.py`.
-- `rosbag_data_val`: Folder for the validation set created from the ROS bag data.
-- `sim_train`: Folder for the validation set created from the simulator data.
-- `sim_val`: Folder for the validation set created from the simulator data. -->
-
-<!-- Note that the structure inside `rosbag_data_val`, `sim_train` or `sim_val`
-is the same as that of `rosbag_data_train` folder. -->
+- `boschmini_to_pascal.py`: This python file is to convert the original
+yaml annotation file of the Bosch Small Traffic Lights Dataset to xml.
+- `Readme-boschmini_to_pascal.md`: This markdown file explains
+how to create Bosch mini dataset from the original Bosch Small Traffic Lights Dataset.
 
 The datasets for building traffic light detection models can be downloaded
-from the links below:
-
-- ROS bag dataset
-  - [rosbag_data](https://drive.google.com/open?id=1sEXrzjLgBEjWGV2igexEtHGzDsaxFsdF): Full data from the ROS bag video.
-  New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
-  - [rosbag_data_train](https://drive.google.com/open?id=1yWSGbh7mgTuUCO5u4CZ-OMXFaEF1B4_w): 80% of randomly selected data from the full ROS bag data
-  with `train_val_generate.ipynb`. For training.
-  - [rosbag_data_val](https://drive.google.com/open?id=1AAQv7zRtcdPdQjiNqN3nhOvxo1c_xpcQ): The rest of data (20%). For validation.
-
-- Simulator dataset (**UNDER CONSTRUCTION**)
-  - [sim_data(training + validation)](???): Full data from recorded simulator videos.
-  New training and validation sets can be created from this dataset by using `train_val_generate.ipynb`.  
-  - [sim_data_train](???): 80% of randomly selected data from the full simulator data
-  with `train_val_generate.ipynb`. For training.
-  - [sim_data_val](???): The rest of data (20%). For validation.
+from the links given in `ros/src/tl_detect/README.md`
 
 The organization of the folder for each dataset is as follows:
 - `images`: This subfolder contains images in jpeg format.
@@ -79,9 +56,9 @@ on RViz:
   - ON the third terminal, run `rviz`
 
 - In case one wants to generate jpeg files from a ROS bag file, follow the steps below:
-  - In `bag1image.launch`, change the path to the bag file and the one to the folder
+  - In `bag2image.launch`, change the path to the bag file and the one to the folder
   to save jpeg files.
-  - On a terminal, run `roslaunch ./bag1image.launch`
+  - On a terminal, run `roslaunch ./bag2image.launch`
 
 #### Create Jpeg from Simulator Recording.
 
@@ -129,15 +106,13 @@ python ${PATH_TO_DATA_DIR}/create_pascal_tf_record_sdc.py
 --output_path=${PATH_TO_DATA_DIR}/${DATA_NAME}/${DATA_NAME}.record
 ```
 
-<!-- In case of using a new dataset, create a new dataset inside this
-folder (`tl_detect/data`) such that it has
-- `images` folder with jpeg images
-- `annotations` folder with xml annotations.
-- `filename_list.txt` listing in the name of the images (excluding the file extension). -->
-
 In case of using a different dataset,
 when running the `create_pascal_tf_record_sdc.py`, do not forget to
 change `DATA_NAME=[new dataset folder]` appropriately.
+
+### Creating Bosch Mini Dataset
+For how to create Bosch mini dataset, please refer to
+`Readme-boschmini_to_pascal.md` in this directory. 
 
 ### Note
 
