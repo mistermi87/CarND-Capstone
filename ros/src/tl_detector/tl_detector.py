@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+import logging
+
+
 import rospy
 from std_msgs.msg import Int32
 from geometry_msgs.msg import PoseStamped, Pose
@@ -15,16 +19,16 @@ import numpy as np
 import datetime
 from scipy.spatial import KDTree
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 2
 
 # Skip certain number of images to relieve a developer machine (if needed).
 # If set to False, every image will be used.
-SKIP_IMAGES = 2
+SKIP_IMAGES = 3
 
 class TLDetector(object):
 
     def __init__(self):
-
+        logging.getLogger('tensorflow').disabled = True
         rospy.init_node('tl_detector')
 
         self.waypoints_2d = None
@@ -227,6 +231,7 @@ class TLDetector(object):
 
 
 if __name__ == '__main__':
+
     try:
         TLDetector()
     except rospy.ROSInterruptException:

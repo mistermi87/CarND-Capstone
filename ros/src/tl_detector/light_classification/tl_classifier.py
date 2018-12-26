@@ -10,6 +10,9 @@ from PIL import ImageColor
 from PIL import ImageFont
 import rospy
 import datetime
+
+import logging
+
 # path to the frozen graph for the trained model
 # PATH_TO_FROZEN_GRAPH = "frozen_inference_graph.pb"
 PATH_TO_FROZEN_GRAPH = "light_classification/frozen_inference_graph.pb"
@@ -41,7 +44,7 @@ COLOR_LIST = ['lawngreen', 'red', 'yellow'] # list of color to be used for visua
 class TLClassifier(object):
 
     def __init__(self, frozen_graph="frozen_inference_graph.pb"):
-
+        logging.getLogger('tensorflow').disabled = True
         # path to the frozen graph for the trained model
         PATH_TO_FROZEN_GRAPH = "light_classification/" + frozen_graph
 
@@ -61,6 +64,17 @@ class TLClassifier(object):
 
         # cutoff for score of detection
         self.conf_cutoff = CONFIDENCE_CUTOFF
+        
+        self.tfsession = self.start_session()
+
+    def start_session(self): 
+        sess = tf.Session(graph=self.detection_graph)
+        return sess
+
+    def run_session(self,image_np):
+        return self.tfsession.run([self.detection_boxes, self.detection_scores,
+                                                    self.detection_classes],
+                                                    feed_dict={self.image_tensor: image_np})
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -76,33 +90,31 @@ class TLClassifier(object):
         image_np = np.expand_dims(cv_image, 0)
         image_pil = Image.fromarray(cv_image)
 
+        (boxes, scores, classes) = self.run_session(image_np)
 
 
-        with tf.Session(graph=self.detection_graph) as sess:
-            time_start = datetime.datetime.now()
+        time_start = datetime.datetime.now()
             # Actual detection.
-            (boxes, scores, classes) = sess.run([self.detection_boxes, self.detection_scores,
-                                                    self.detection_classes],
-                                                    feed_dict={self.image_tensor: image_np})
-            time_finish = datetime.datetime.now()
+
+        time_finish = datetime.datetime.now()
             # Remove unnecessary dimensions
-            boxes = np.squeeze(boxes)
-            scores = np.squeeze(scores)
-            classes = np.squeeze(classes)
+        boxes = np.squeeze(boxes)
+        scores = np.squeeze(scores)
+        classes = np.squeeze(classes)
             # Filter boxes with a confidence score less than `confidence_cutoff`
-            boxes, scores, classes = self.filter_boxes(self.conf_cutoff, boxes, scores, classes)
+        boxes, scores, classes = self.filter_boxes(self.conf_cutoff, boxes, scores, classes)
 
 
             # The current box coordinates are normalized to a range between 0 and 1.
             # This converts the coordinates actual location on the image.
-            width, height = image_pil.size
-            box_coords = self.to_image_coords(boxes, height, width)
+        width, height = image_pil.size
+        box_coords = self.to_image_coords(boxes, height, width)
 
             # Each class with be represented by a differently colored box
-            image_draw = self.draw_boxes(image_pil, box_coords, classes, scores)
+        image_draw = self.draw_boxes(image_pil, box_coords, classes, scores)
 
-            cv_image_out_bgr = np.array(image_draw.getdata(),np.uint8).reshape(image_draw.size[1], image_draw.size[0], 3)
-            cv_image_out_rgb = cv2.cvtColor(cv_image_out_bgr, cv2.COLOR_BGR2RGB)             
+        cv_image_out_bgr = np.array(image_draw.getdata(),np.uint8).reshape(image_draw.size[1], image_draw.size[0], 3)
+        cv_image_out_rgb = cv2.cvtColor(cv_image_out_bgr, cv2.COLOR_BGR2RGB)             
 
             # # If doing majority vote, use the following code:
             # scores = []
@@ -124,14 +136,14 @@ class TLClassifier(object):
 
             # If simpliy choosing the one with the highest score use below.
             # If one or more lights detected, select the class with the highest score
-            if(len(classes) > 0):
-                max_id = list(scores).index(max(scores))
-                tl_id = (int(classes[max_id]) + 1) % 3
-            else: # if nothing detected, return unknown
-                tl_id = TrafficLight.UNKNOWN
+        if(len(classes) > 0):
+            max_id = list(scores).index(max(scores))
+            tl_id = (int(classes[max_id]) + 1) % 3
+        else: # if nothing detected, return unknown
+            tl_id = TrafficLight.UNKNOWN
         
         time_processing = time_finish - time_start
-        #rospy.logwarn("[tl_cllassifier]: tl_id {0} Time: {1} ".format(tl_id, time_processing))
+        rospy.logwarn("[tl_cllassifier] inference time: tl_id {0} Time: {1} ".format(tl_id, time_processing))
         return tl_id, cv_image_out_rgb
 
     def filter_boxes(self, min_score, boxes, scores, classes):
