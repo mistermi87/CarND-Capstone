@@ -35,6 +35,13 @@ class TLDetector(object):
         self.waypoints = None
         self.camera_image = None
         self.lights = []
+        # Conter for image skipping
+        self.image_counter = 0
+        self.listener = tf.TransformListener()
+        self.state = TrafficLight.UNKNOWN
+        self.last_state = TrafficLight.UNKNOWN
+        self.last_wp = -1
+        self.state_count = 0
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -60,20 +67,19 @@ class TLDetector(object):
         # Setting up the classifier
         frozen_graph = rospy.get_param('~frozen_graph', "frozen_inference_graph.pb")
         debug = rospy.get_param('~debug', "false")
+        self.is_site = rospy.get_param('~is_site', "false")
+        #self.is_site_param = rospy.get_param("/is_site")
+        rospy.logwarn("[tl_detector] is_site {0} ".format(self.is_site))
+        
+        #rospy.logwarn("[tl_detector] Parameters {0} ".format(rospy.get_param_names()))
+        
         self.light_classifier = TLClassifier(frozen_graph, debug)
 
         # Running a first inference so that the model gets fully loaded
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
         _ = self.light_classifier.get_classification(fake_image_data)
 
-        self.listener = tf.TransformListener()
-        self.state = TrafficLight.UNKNOWN
-        self.last_state = TrafficLight.UNKNOWN
-        self.last_wp = -1
-        self.state_count = 0
 
-        # Conter for image skipping
-        self.image_counter = 0
 
         rospy.spin()
 

@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="debug" default="false" doc="Debug flag"/>
+    <arg name="is_site" default="true" doc="is_site flag"/>
     <node pkg="tl_detector" type="tl_detector.py" name="tl_detector" output="screen" cwd="node">
         <param name="frozen_graph" value="frozen_inference_graph.pb"/>
         <param name="debug" value="$(arg debug)"/>
+        <param name="is_site" value="$(arg is_site)"/>
     </node>
     <node pkg="tl_detector" type="light_publisher.py" name="light_publisher" output="screen" cwd="node"/>
 </launch>

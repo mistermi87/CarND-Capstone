@@ -26,7 +26,7 @@ NUM_CLASSES = 3
 PATH_TO_LABELS = os.path.join('data/', 'label_map_sdc.pbtxt')
 
 # shoud match with the order in label_map_sdc.pbtxt
-CLASSNAME_LIST = ['Green', 'Red', 'Yellow'] # list of class name
+CLASSNAME_LIST = ['Green', 'Red', 'Yellow','Unknown'] # list of class name
 COLOR_LIST = ['lawngreen', 'red', 'yellow'] # list of color to be used for visual purpose below
 
 
@@ -111,6 +111,7 @@ class TLClassifier(object):
         boxes, scores, classes = self.filter_boxes(self.conf_cutoff, boxes, scores, classes)
 
         cv_image_out_rgb = None
+        rospy.logwarn("[tl_classifier] debug {0} ".format(self.debug))
         if self.debug:
             image_pil = Image.fromarray(cv_image)
 
@@ -153,7 +154,7 @@ class TLClassifier(object):
             tl_id = TrafficLight.UNKNOWN
 
         time_processing = time_finish - time_start
-        rospy.logwarn("[tl_cllassifier] inference time: tl_id {0} Time: {1} ".format(tl_id, time_processing))
+        rospy.logwarn("[tl_cllassifier] Inference : tl_id {0} Time: {1} ".format(CLASSNAME_LIST[tl_id-1], time_processing))
         return tl_id, cv_image_out_rgb
 
 
