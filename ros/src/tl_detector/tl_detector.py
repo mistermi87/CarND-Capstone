@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-
-
 import rospy
 from std_msgs.msg import Int32
 from geometry_msgs.msg import PoseStamped, Pose
@@ -59,8 +57,11 @@ class TLDetector(object):
 
         self.bridge = CvBridge()
 
+        # Setting up the classifier
         frozen_graph = rospy.get_param('~frozen_graph', "frozen_inference_graph.pb")
-        self.light_classifier = TLClassifier(frozen_graph)
+        debug = rospy.get_param('~debug', "false")
+        self.light_classifier = TLClassifier(frozen_graph, debug)
+
         # Running a first inference so that the model gets fully loaded
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
         _ = self.light_classifier.get_classification(fake_image_data)
@@ -185,7 +186,7 @@ class TLDetector(object):
 
         cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-        #Get classification
+        # Get classification
         tl_id, image_draw = self.light_classifier.get_classification(cv_image)
         
         self.inference_image.publish(self.bridge.cv2_to_imgmsg(image_draw, "bgr8"))
