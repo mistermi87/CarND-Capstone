@@ -111,7 +111,7 @@ class TLClassifier(object):
         boxes, scores, classes = self.filter_boxes(self.conf_cutoff, boxes, scores, classes)
 
         cv_image_out_rgb = None
-        rospy.logwarn("[tl_classifier] debug {0} ".format(self.debug))
+        #rospy.logwarn("[tl_classifier] debug {0} ".format(self.debug))
         if self.debug:
             image_pil = Image.fromarray(cv_image)
 
@@ -154,7 +154,7 @@ class TLClassifier(object):
             tl_id = TrafficLight.UNKNOWN
 
         time_processing = time_finish - time_start
-        rospy.logwarn("[tl_cllassifier] Inference : tl_id {0} Time: {1} ".format(CLASSNAME_LIST[tl_id-1], time_processing))
+        rospy.logwarn("[tl_classifier] Inference : tl_id {0} Time: {1} ".format(tl_id, time_processing))
         return tl_id, cv_image_out_rgb
 
 

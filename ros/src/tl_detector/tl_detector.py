@@ -212,7 +212,7 @@ class TLDetector(object):
 
         #TODO find the closest visible traffic light (if one exists)
 
-        closest_light = None
+        closest_light = True
         line_waypoint_idx = None
 
         stop_line_positions = self.config['stop_line_positions']
