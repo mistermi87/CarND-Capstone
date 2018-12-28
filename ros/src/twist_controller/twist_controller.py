@@ -20,7 +20,7 @@ class Controller(object):
         ki = 0.1
         kd = 0.
         mn = 0.
-        mx = max(0.1, min(1.0, 0.2 * rospy.get_param('/waypoint_loader/velocity', 40.0) / 40.0))
+        mx = max(0.18, min(1.0, 0.2 * rospy.get_param('/waypoint_loader/velocity', 40.0) / 40.0))
         self.throttle_controller = PID(kp,ki,kd,mn,mx)
 
         tau = 0.5

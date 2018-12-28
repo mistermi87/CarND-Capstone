@@ -123,7 +123,7 @@ class WaypointUpdater(object):
             p = Waypoint()
             p.pose = wp.pose
 
-            stop_idx = max(self.stopline_waypoint_idx - closest_idx - 5, 0)
+            stop_idx = max(self.stopline_waypoint_idx - closest_idx - 4, 0)
 
             # Calculating the distance only in case the target is still ahead of the current waypoint
             dist = 0
@@ -184,7 +184,7 @@ class WaypointUpdater(object):
             if ADJUST_DECELERATION:
                 # Reference value: decelerating by 2 m/s^2 at 40 km/h
                 # A deceleration value will be picked that is linearly proportional to the base value
-                MAX_DECEL = max(0.5, min(3, max_vel_kmh / 20.0) )
+                MAX_DECEL = max(1.0, min(3, max_vel_kmh / 20.0) )
                 rospy.logwarn("[waypoints_cb] Using adjusted deceleration: {} m/s^2".format(MAX_DECEL))
 
             if ADJUST_LOOKAHEAD:
