@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="debug" default="false" doc="Debug flag"/>
+    <arg name="is_site" default="false" doc="is_site flag"/>
     <node pkg="tl_detector" type="tl_detector.py" name="tl_detector" output="screen" cwd="node">
         <param name="frozen_graph" value="frozen_inference_graph_sim.pb" />
         <param name="debug" value="$(arg debug)"/>
