@@ -194,9 +194,9 @@ class TLDetector(object):
 
         # Get classification
         tl_id, image_draw = self.light_classifier.get_classification(cv_image)
-        if image_draw != None:
+        if image_draw is not None:
             self.inference_image.publish(self.bridge.cv2_to_imgmsg(image_draw, "bgr8"))
-        
+
         return tl_id
 
 
