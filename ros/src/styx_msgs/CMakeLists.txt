@@ -57,6 +57,7 @@ add_message_files(
   Waypoint.msg
   Lane.msg
   Map.msg
+  CameraImage.msg
 )
 
 ## Generate services in the 'srv' folder

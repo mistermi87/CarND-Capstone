@@ -232,6 +232,9 @@ class TLClassifier(object):
         new_rgb = np.dstack([new_image_red, new_image_green, new_image_blue])
         return new_rgb
 
+
+
+
 # # for check
 # import cv2
 # if __name__ == '__main__':
