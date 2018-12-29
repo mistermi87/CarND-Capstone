@@ -21,9 +21,16 @@ STATE_COUNT_THRESHOLD = 3
 
 # Skip certain number of images to relieve a developer machine (if needed).
 # If set to False, every image will be used.
-SKIP_IMAGES = 1
+# SKIP_IMAGES = 1
+
+# Semaphor limit
+MAX_WORKERS = 1
 
 class TLDetector(object):
+
+    # Our semaphor. A "worker" is an image processing unit/module (here: a function)
+    worker_count = 0
+
 
     def __init__(self):
 
@@ -36,13 +43,13 @@ class TLDetector(object):
         self.waypoints = None
         self.camera_image = None
         self.lights = []
-        # Conter for image skipping
-        self.image_counter = 0
         self.listener = tf.TransformListener()
         self.state = TrafficLight.UNKNOWN
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
+        # # Conter for image skipping
+        # self.image_counter = 0
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -82,8 +89,6 @@ class TLDetector(object):
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
         _ = self.light_classifier.get_classification(fake_image_data)
 
-
-
         rospy.spin()
 
 
@@ -94,15 +99,15 @@ class TLDetector(object):
     def waypoints_cb(self, waypoints):
         self.waypoints = waypoints
         if not self.waypoints_2d:
-                self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints ]
-                #rospy.logwarn("Waypoints_2d: {0}".format(self.waypoints_2d))
-                time_start = datetime.datetime.now()
-                self.waypoint_tree = KDTree(self.waypoints_2d)
-                #rospy.logwarn("waypoint_tree: {0}".format(self.waypoint_tree))   
-                time_finish = datetime.datetime.now()
+            self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints ]
+            #rospy.logwarn("Waypoints_2d: {0}".format(self.waypoints_2d))
+            time_start = datetime.datetime.now()
+            self.waypoint_tree = KDTree(self.waypoints_2d)
+            #rospy.logwarn("waypoint_tree: {0}".format(self.waypoint_tree))   
+            time_finish = datetime.datetime.now()
 
-                time_processing = time_finish - time_start
-                rospy.logwarn("[tl_detector]: Time: {0} ".format(time_processing))     
+            time_processing = time_finish - time_start
+            rospy.logwarn("[tl_detector]: Time: {0} ".format(time_processing))     
 
 
     def traffic_cb(self, msg):
@@ -118,46 +123,53 @@ class TLDetector(object):
 
         """
 
-        # skipping images
-        if SKIP_IMAGES != False:
+        # # skipping images
+        # if SKIP_IMAGES != False:
 
-            self.image_counter += 1
-            if self.image_counter % (SKIP_IMAGES + 1) != 0:
-                return
+        #     self.image_counter += 1
+        #     if self.image_counter % (SKIP_IMAGES + 1) != 0:
+        #         return
 
-            # avoiding overflow in the long term: resetting the counter
-            self.image_counter = 0
+        #     # avoiding overflow in the long term: resetting the counter
+        #     self.image_counter = 0
 
-        self.has_image = True
-        self.camera_image = msg
+        # DIY "test-and-set" :-/
+        TLDetector.worker_count += 1
+        if TLDetector.worker_count <= MAX_WORKERS:
 
-        light_wp, state = self.process_traffic_lights()
-        #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+            self.has_image = True
+            self.camera_image = msg
 
-        # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
-        if state == TrafficLight.YELLOW:
-            state = TrafficLight.RED
+            light_wp, state = self.process_traffic_lights()
+            #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
 
-        '''
-        Publish upcoming red lights at camera frequency.
-        Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
-        of times till we start using it. Otherwise the previous stable state is
-        used.
-        '''
-        if self.state != state:
-            self.state_count = 0
-            self.state = state
+            # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
+            if state == TrafficLight.YELLOW:
+                state = TrafficLight.RED
 
-        elif self.state_count >= STATE_COUNT_THRESHOLD:
-            self.last_state = self.state
-            light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
-            self.last_wp = light_wp
-            self.upcoming_red_light_pub.publish(Int32(light_wp))
+            '''
+            Publish upcoming red lights at camera frequency.
+            Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
+            of times till we start using it. Otherwise the previous stable state is
+            used.
+            '''
+            if self.state != state:
+                self.state_count = 0
+                self.state = state
 
-        else:
-            self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+            elif self.state_count >= STATE_COUNT_THRESHOLD:
+                self.last_state = self.state
+                light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
+                self.last_wp = light_wp
+                self.upcoming_red_light_pub.publish(Int32(light_wp))
 
-        self.state_count += 1
+            else:
+                self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+
+            self.state_count += 1
+
+        # Releasing the semaphor
+        TLDetector.worker_count -= 1
 
 
     def get_closest_waypoint(self, x, y):
