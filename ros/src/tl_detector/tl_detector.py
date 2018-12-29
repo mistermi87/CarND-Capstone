@@ -19,8 +19,8 @@ from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
 
-# Skip certain number of images to relieve a developer machine (if needed).
-# If set to False, every image will be used.
+# Skip certain number of images to relieve the host computer (if needed).
+# If set to False or zero (0), every image will be used.
 # SKIP_IMAGES = 1
 
 # Semaphor limit
@@ -137,6 +137,8 @@ class TLDetector(object):
         TLDetector.worker_count += 1
         if TLDetector.worker_count <= MAX_WORKERS:
 
+            rospy.logwarn("[image_cb] Processing image")
+
             self.has_image = True
             self.camera_image = msg
 
@@ -167,6 +169,9 @@ class TLDetector(object):
                 self.upcoming_red_light_pub.publish(Int32(self.last_wp))
 
             self.state_count += 1
+
+        else:
+            rospy.logerr("[image_cb] Dropping image (processing in progress)")
 
         # Releasing the semaphor
         TLDetector.worker_count -= 1
