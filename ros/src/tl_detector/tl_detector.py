@@ -77,12 +77,12 @@ class TLDetector(object):
 
         # Setting up the classifier
         frozen_graph = rospy.get_param('~frozen_graph', "frozen_inference_graph.pb")
-        debug = rospy.get_param('~debug', "false")
-        self.light_classifier = TLClassifier(frozen_graph, debug)
+        self.debug = rospy.get_param('~debug', "false")
+        self.light_classifier = TLClassifier(frozen_graph, self.debug)
 
         # ...
         self.is_site = rospy.get_param('~is_site', "false")
-        rospy.logwarn("[tl_detector] is_site: {}  debug: {}".format(self.is_site, debug))
+        rospy.logwarn("[tl_detector] is_site: {}  debug: {}".format(self.is_site, self.debug))
 
         # Running a first inference so that the model gets fully loaded/initialized
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
@@ -120,7 +120,7 @@ class TLDetector(object):
 
         """
 
-        # DIY "test-and-set" or trying to pass the semaphor :-/
+        # DIY "test-and-set" :-/ or trying to pass the semaphor
         TLDetector.worker_count += 1
         if TLDetector.worker_count <= MAX_WORKERS:
 
