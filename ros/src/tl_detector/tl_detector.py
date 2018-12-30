@@ -13,7 +13,7 @@ import cv2
 import yaml
 import numpy as np
 
-import datetime
+import time
 from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
@@ -48,6 +48,7 @@ class TLDetector(object):
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
+
         # Counter for image skipping. The first image will be used definitely
         self.image_counter = SKIP_IMAGES
 
@@ -62,15 +63,13 @@ class TLDetector(object):
         rely on the position of the light and the camera image to predict it.
         '''
         sub3 = rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.traffic_cb)
-        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=20*800*600*3)
+        sub6 = rospy.Subscriber('/image_color', Image, self.image_cb, queue_size=1, buff_size=32*800*600*3)
 
         config_string = rospy.get_param("/traffic_light_config")
         self.config = yaml.load(config_string)
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
         self.inference_image = rospy.Publisher('/inference_image',Image, queue_size=1)
-
-
 
         self.bridge = CvBridge()
 
@@ -81,7 +80,7 @@ class TLDetector(object):
 
         # ...
         self.is_site = rospy.get_param('~is_site', "false")
-        rospy.logwarn("[tl_detector] is_site: {}  debug: {}".format(self.is_site, self.debug))
+        rospy.logwarn("[tl_detector.__init__] is_site: {}  debug: {}".format(self.is_site, self.debug))
 
         # Running a first inference so that the model gets fully loaded/initialized
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
@@ -98,12 +97,12 @@ class TLDetector(object):
         self.waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints ]
-            time_start = datetime.datetime.now()
+            time_start = time.time()
             self.waypoint_tree = KDTree(self.waypoints_2d)
-            time_finish = datetime.datetime.now()
+            time_finish = time.time()
 
-            time_processing = time_finish - time_start
-            rospy.logwarn("[tl_detector]: Time: {0} ".format(time_processing))     
+            time_processing = (time_finish - time_start) * 1000
+            rospy.logwarn("[tl_detector.waypoints_cb]: Execution time: {:.2f} millisecods".format(time_processing))     
 
 
     def traffic_cb(self, msg):
@@ -132,16 +131,18 @@ class TLDetector(object):
                 process_image = self.image_counter % (SKIP_IMAGES + 1) == 0
 
             if process_image:
-                #rospy.logwarn("[image_cb] Processing image (image counter={}, SKIP_IMAGES={})".format(self.image_counter, SKIP_IMAGES))
+                # Logging in debug mode only
+                if self.debug:
+                    rospy.logwarn("[image_cb] Processing image (image counter={}, SKIP_IMAGES={})".format(self.image_counter, SKIP_IMAGES))
 
-                # avoiding overflow in the long term: resetting the counter
+                # Avoiding overflow in the long term: resetting the counter
                 self.image_counter = 0
 
                 self.has_image = True
                 self.camera_image = msg
 
                 light_wp, state = self.process_traffic_lights()
-                #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+                # rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
 
                 # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
                 if state == TrafficLight.YELLOW:
@@ -168,10 +169,10 @@ class TLDetector(object):
 
                 self.state_count += 1
 
-            else:
+            elif self.debug:
                 rospy.logwarn("[image_cb] Skipping image (image counter={}; processig image when counter reaches {})".format(self.image_counter, SKIP_IMAGES+1))
 
-        else:
+        elif self.debug:
             rospy.logwarn("[image_cb] Dropping image (processing in progress)")
 
         # Releasing the semaphor
@@ -188,8 +189,6 @@ class TLDetector(object):
             int: index of the closest waypoint in self.waypoints
 
         """
-        #TODO implement
-
         closest_idx = self.waypoint_tree.query([x,y],1)[1]
         return closest_idx
 
@@ -204,6 +203,7 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
+
         # # for testing
         # return light.state
 
@@ -230,9 +230,6 @@ class TLDetector(object):
             int: ID of traffic light color (specified in styx_msgs/TrafficLight)
 
         """
-
-        #TODO find the closest visible traffic light (if one exists)
-
         closest_light = True
         line_waypoint_idx = None
 
