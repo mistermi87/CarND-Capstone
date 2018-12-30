@@ -26,6 +26,7 @@ in the [original repo](https://github.com/tensorflow/models) for TensorFlow mode
 - `test_performance.py`: The content of this Python file is
 for check performance of the trained model. This Python code can run on Udacity GPU
 workspace.
+- `object_detection_sdc.ipynb`: Jupyter notebook version of `test_performance.py`.
 - `training`: This folder is for training models.
 
 The datasets for building traffic light detection models can be downloaded
@@ -95,6 +96,7 @@ download some models after training:
   - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
   - batch size 24, number of steps 20000
   - data for training: Bosch mini dataset + ROS bag dataset with 0.8:0.2 split
+  - **THIS MODEL IS USED FOR REAL-WORLD TRAFFIC LIGHT DETECTION**
 
 - [trained_model4](https://drive.google.com/open?id=1x-oo5m5JfXABM9vY3ZYho8wdvLIwCQPO)
   - pre-trained model: `ssd_inception_v2_coco_2017_11_17.tar.gz`
@@ -115,6 +117,7 @@ download some models after training:
   - pre-trained model: `ssd_mobilenet_v1_coco_2017_11_17.tar.gz`
   - batch size 24, number of steps 12000
   - data for training: v2 sim dataset + v3 sim dataset with 0.8:0.2 split
+  - **THIS MODEL IS USED FOR SIMULATOR TRAFFIC LIGHT DETECTION**
 
 - [trained_model8](https://drive.google.com/open?id=1Wx2m--evijNHwHeuoic3o5reg8tKHV92)
   - pre-trained model: `ssd_mobilenet_v1_coco_2017_11_17.tar.gz`
