@@ -20,11 +20,12 @@ from scipy.spatial import KDTree
 STATE_COUNT_THRESHOLD = 3
 
 # Skip certain number of images to relieve the host computer (if needed).
-# If set to False or zero (0), every image will be used.
-# SKIP_IMAGES = 1
+# Every <SKIP_IMAGES + 1>th image will be used ==> if set to False or zero (0), each image will be used.
+SKIP_IMAGES = 1
 
 # Semaphor limit
 MAX_WORKERS = 1
+
 
 class TLDetector(object):
 
@@ -48,8 +49,8 @@ class TLDetector(object):
         self.last_state = TrafficLight.UNKNOWN
         self.last_wp = -1
         self.state_count = 0
-        # # Conter for image skipping
-        # self.image_counter = 0
+        # Counter for image skipping. The first image will be used definitely
+        self.image_counter = SKIP_IMAGES
 
         sub1 = rospy.Subscriber('/current_pose', PoseStamped, self.pose_cb)
         sub2 = rospy.Subscriber('/base_waypoints', Lane, self.waypoints_cb)
@@ -77,15 +78,13 @@ class TLDetector(object):
         # Setting up the classifier
         frozen_graph = rospy.get_param('~frozen_graph', "frozen_inference_graph.pb")
         debug = rospy.get_param('~debug', "false")
-        self.is_site = rospy.get_param('~is_site', "false")
-        #self.is_site_param = rospy.get_param("/is_site")
-        rospy.logwarn("[tl_detector] is_site {0} ".format(self.is_site))
-        
-        #rospy.logwarn("[tl_detector] Parameters {0} ".format(rospy.get_param_names()))
-        
         self.light_classifier = TLClassifier(frozen_graph, debug)
 
-        # Running a first inference so that the model gets fully loaded
+        # ...
+        self.is_site = rospy.get_param('~is_site', "false")
+        rospy.logwarn("[tl_detector] is_site: {}  debug: {}".format(self.is_site, debug))
+
+        # Running a first inference so that the model gets fully loaded/initialized
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
         _ = self.light_classifier.get_classification(fake_image_data)
 
@@ -100,10 +99,8 @@ class TLDetector(object):
         self.waypoints = waypoints
         if not self.waypoints_2d:
             self.waypoints_2d = [[waypoint.pose.pose.position.x, waypoint.pose.pose.position.y] for waypoint in waypoints.waypoints ]
-            #rospy.logwarn("Waypoints_2d: {0}".format(self.waypoints_2d))
             time_start = datetime.datetime.now()
             self.waypoint_tree = KDTree(self.waypoints_2d)
-            #rospy.logwarn("waypoint_tree: {0}".format(self.waypoint_tree))   
             time_finish = datetime.datetime.now()
 
             time_processing = time_finish - time_start
@@ -123,55 +120,60 @@ class TLDetector(object):
 
         """
 
-        # # skipping images
-        # if SKIP_IMAGES != False:
-
-        #     self.image_counter += 1
-        #     if self.image_counter % (SKIP_IMAGES + 1) != 0:
-        #         return
-
-        #     # avoiding overflow in the long term: resetting the counter
-        #     self.image_counter = 0
-
-        # DIY "test-and-set" :-/
+        # DIY "test-and-set" or trying to pass the semaphor :-/
         TLDetector.worker_count += 1
         if TLDetector.worker_count <= MAX_WORKERS:
 
-            rospy.logwarn("[image_cb] Processing image")
+            # Semaphor passed.
+            process_image = True
 
-            self.has_image = True
-            self.camera_image = msg
+            # Deterining whether we have to skip or process the image
+            if SKIP_IMAGES != False:
+                self.image_counter += 1
+                process_image = self.image_counter % (SKIP_IMAGES + 1) == 0
 
-            light_wp, state = self.process_traffic_lights()
-            #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+            if process_image:
+                rospy.logwarn("[image_cb] Processing image (image counter={}, SKIP_IMAGES={})".format(self.image_counter, SKIP_IMAGES))
 
-            # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
-            if state == TrafficLight.YELLOW:
-                state = TrafficLight.RED
+                # avoiding overflow in the long term: resetting the counter
+                self.image_counter = 0
 
-            '''
-            Publish upcoming red lights at camera frequency.
-            Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
-            of times till we start using it. Otherwise the previous stable state is
-            used.
-            '''
-            if self.state != state:
-                self.state_count = 0
-                self.state = state
+                self.has_image = True
+                self.camera_image = msg
 
-            elif self.state_count >= STATE_COUNT_THRESHOLD:
-                self.last_state = self.state
-                light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
-                self.last_wp = light_wp
-                self.upcoming_red_light_pub.publish(Int32(light_wp))
+                light_wp, state = self.process_traffic_lights()
+                #rospy.logwarn("Closest light wp: {0} light state {1}".format(light_wp, state))
+
+                # We don't want to risk the counter reset on a yellow --> red state change (goodbye, TrafficLight.YELLOW)
+                if state == TrafficLight.YELLOW:
+                    state = TrafficLight.RED
+
+                '''
+                Publish upcoming red lights at camera frequency.
+                Each predicted state has to occur `STATE_COUNT_THRESHOLD` number
+                of times till we start using it. Otherwise the previous stable state is
+                used.
+                '''
+                if self.state != state:
+                    self.state_count = 0
+                    self.state = state
+
+                elif self.state_count >= STATE_COUNT_THRESHOLD:
+                    self.last_state = self.state
+                    light_wp = light_wp if state == TrafficLight.RED or state == TrafficLight.YELLOW else -1
+                    self.last_wp = light_wp
+                    self.upcoming_red_light_pub.publish(Int32(light_wp))
+
+                else:
+                    self.upcoming_red_light_pub.publish(Int32(self.last_wp))
+
+                self.state_count += 1
 
             else:
-                self.upcoming_red_light_pub.publish(Int32(self.last_wp))
-
-            self.state_count += 1
+                rospy.logwarn("[image_cb] Skipping image (image counter={}; processig image when counter reaches {})".format(self.image_counter, SKIP_IMAGES+1))
 
         else:
-            rospy.logerr("[image_cb] Dropping image (processing in progress)")
+            rospy.logwarn("[image_cb] Dropping image (processing in progress)")
 
         # Releasing the semaphor
         TLDetector.worker_count -= 1
