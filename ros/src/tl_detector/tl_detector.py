@@ -5,7 +5,6 @@ from std_msgs.msg import Int32
 from geometry_msgs.msg import PoseStamped, Pose
 from styx_msgs.msg import TrafficLightArray, TrafficLight
 from styx_msgs.msg import Lane
-from styx_msgs.msg import CameraImage
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from light_classification.tl_classifier import TLClassifier
@@ -70,7 +69,7 @@ class TLDetector(object):
 
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
         self.inference_image = rospy.Publisher('/inference_image',Image, queue_size=1)
-        self.cam_publish = rospy.Publisher('/base_waypoints', CameraImage, queue_size=1)
+
 
 
         self.bridge = CvBridge()
@@ -133,7 +132,7 @@ class TLDetector(object):
                 process_image = self.image_counter % (SKIP_IMAGES + 1) == 0
 
             if process_image:
-                rospy.logwarn("[image_cb] Processing image (image counter={}, SKIP_IMAGES={})".format(self.image_counter, SKIP_IMAGES))
+                #rospy.logwarn("[image_cb] Processing image (image counter={}, SKIP_IMAGES={})".format(self.image_counter, SKIP_IMAGES))
 
                 # avoiding overflow in the long term: resetting the counter
                 self.image_counter = 0
@@ -253,17 +252,11 @@ class TLDetector(object):
         
         if closest_light:
             state = self.get_light_state(closest_light)
-            self.publish( state)
             return line_waypoint_idx, state
 
         return -1, TrafficLight.UNKNOWN
 
-    def publish(self, state):
-        cam_image = CameraImage()
-        cam_image.header.frame_id = '/world'
-        cam_image.header.stamp = rospy.Time(0)
-        #cam_image.image = image
-        self.cam_publish.publish(cam_image)
+
 
 
 if __name__ == '__main__':
