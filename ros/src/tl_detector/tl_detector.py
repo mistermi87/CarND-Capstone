@@ -22,14 +22,10 @@ STATE_COUNT_THRESHOLD = 3
 # Every <SKIP_IMAGES + 1>th image will be used ==> if set to False or zero (0), each image will be used.
 SKIP_IMAGES = 0
 
-# Semaphor limit
-MAX_WORKERS = 1
-
 
 class TLDetector(object):
 
-    # Our semaphor. A "worker" is an image processing unit/module (here: a function)
-    # worker_count = 0
+    # Our semaphor
     inference_in_progress = False
 
 
@@ -79,10 +75,6 @@ class TLDetector(object):
         self.debug = rospy.get_param('~debug', "false")
         self.light_classifier = TLClassifier(frozen_graph, self.debug)
 
-        # ...
-        self.is_site = rospy.get_param('~is_site', "false")
-        rospy.logwarn("[tl_detector.__init__] is_site: {}  debug: {}".format(self.is_site, self.debug))
-
         # Running a first inference so that the model gets fully loaded/initialized
         fake_image_data = np.zeros([600, 800, 3], np.uint8)
         _ = self.light_classifier.get_classification(fake_image_data)
@@ -119,14 +111,11 @@ class TLDetector(object):
 
         """
 
-        # DIY "test-and-set" :-/ or trying to pass the semaphor
-        # TLDetector.worker_count += 1
-        # if TLDetector.worker_count <= MAX_WORKERS:
+        # DIY "test-and-set" :-/ ...or trying to pass the semaphor
         if not TLDetector.inference_in_progress:
 
-            TLDetector.inference_in_progress = True
-
             # Semaphor passed.
+            TLDetector.inference_in_progress = True
             process_image = True
 
             # Deterining whether we have to process this image
@@ -182,9 +171,6 @@ class TLDetector(object):
         elif self.debug:
             rospy.logwarn("[image_cb] Dropping image (processing in progress)")
 
-        # Releasing the semaphor
-        # TLDetector.worker_count -= 1
-
 
     def get_closest_waypoint(self, x, y):
         """Identifies the closest path waypoint to the given position
@@ -214,7 +200,7 @@ class TLDetector(object):
         # # for testing
         # return light.state
 
-        if(not self.has_image):
+        if not self.has_image:
             self.prev_light_loc = None
             return False
 
