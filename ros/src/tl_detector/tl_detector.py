@@ -29,7 +29,8 @@ MAX_WORKERS = 1
 class TLDetector(object):
 
     # Our semaphor. A "worker" is an image processing unit/module (here: a function)
-    worker_count = 0
+    # worker_count = 0
+    inference_in_progress = False
 
 
     def __init__(self):
@@ -119,8 +120,11 @@ class TLDetector(object):
         """
 
         # DIY "test-and-set" :-/ or trying to pass the semaphor
-        TLDetector.worker_count += 1
-        if TLDetector.worker_count <= MAX_WORKERS:
+        # TLDetector.worker_count += 1
+        # if TLDetector.worker_count <= MAX_WORKERS:
+        if not TLDetector.inference_in_progress:
+
+            TLDetector.inference_in_progress = True
 
             # Semaphor passed.
             process_image = True
@@ -172,11 +176,14 @@ class TLDetector(object):
             elif self.debug:
                 rospy.logwarn("[image_cb] Skipping image (image counter={}; processig image when counter reaches {})".format(self.image_counter, SKIP_IMAGES+1))
 
+            # Releasing the semaphor
+            TLDetector.inference_in_progress = False
+
         elif self.debug:
             rospy.logwarn("[image_cb] Dropping image (processing in progress)")
 
         # Releasing the semaphor
-        TLDetector.worker_count -= 1
+        # TLDetector.worker_count -= 1
 
 
     def get_closest_waypoint(self, x, y):
