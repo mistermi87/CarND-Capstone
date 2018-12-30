@@ -21,7 +21,7 @@ STATE_COUNT_THRESHOLD = 3
 
 # Skip certain number of images to relieve the host computer (if needed).
 # Every <SKIP_IMAGES + 1>th image will be used ==> if set to False or zero (0), each image will be used.
-SKIP_IMAGES = 1
+SKIP_IMAGES = 0
 
 # Semaphor limit
 MAX_WORKERS = 1
@@ -127,8 +127,8 @@ class TLDetector(object):
             # Semaphor passed.
             process_image = True
 
-            # Deterining whether we have to skip or process the image
-            if SKIP_IMAGES != False:
+            # Deterining whether we have to process this image
+            if SKIP_IMAGES:
                 self.image_counter += 1
                 process_image = self.image_counter % (SKIP_IMAGES + 1) == 0
 
