@@ -1,0 +1,22 @@
+name: carnd-capstone-gpu
+channels:
+    - https://conda.anaconda.org/menpo
+    - conda-forge
+dependencies:
+    - Flask==0.11.1
+    - attrdict==2.0.0
+    - eventlet==0.19.0
+    - numpy==1.13.1
+    - scipy==0.19.1
+    - keras==2.0.8
+    - protobuf==3.5.1
+    - matplotlib==2.1.0
+    - ipykernel==4.9.0
+    - lxml==4.1.1
+    - pillow==4.2.1
+    - pip:
+      - tensorflow-gpu==1.4.0
+      - python-socketio==1.6.1
+      - h5py==2.6.0
+      - tensorflow-tensorboard==0.4.0
+      - enum34==1.1.6

@@ -27,7 +27,22 @@ COLOR_LIST = ['lawngreen', 'red', 'yellow'] # list of color to be used for visua
 
 # path to test image directory
 PATH_TO_TEST_IMAGES_DIR = 'data/test_images'
-TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 4) ]
+# TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, 'image{}.jpg'.format(i)) for i in range(1, 4) ]
+
+# Taking every image from that directory
+test_files = []
+all_files = os.listdir(PATH_TO_TEST_IMAGES_DIR)
+for test_file in all_files:
+
+    # Discarding files with the name pattern "[...]_detected.jpg" and "[...]detect.jpg"
+    if not ('_detect.jpg' in test_file or '_detected.jpg' in test_file or 'detect.jpg' in test_file):
+        test_files.append(test_file)
+
+TEST_IMAGE_PATHS = [ os.path.join(PATH_TO_TEST_IMAGES_DIR, test_file) for test_file in test_files ]
+print("Using {} test images:".format(len(test_files)))
+for test_image in TEST_IMAGE_PATHS:
+    print(test_image)
+
 
 # --------------- Load Frozen Tensorflow Model into Memory. -------------------
 
@@ -121,6 +136,7 @@ detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
 # The classification of the object (integer id).
 detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
 
+sess = tf.Session(graph=detection_graph)
 
 for image_path in TEST_IMAGE_PATHS:
 
@@ -128,28 +144,27 @@ for image_path in TEST_IMAGE_PATHS:
     image = Image.open(image_path)
     image_np = np.expand_dims(np.asarray(image, dtype=np.uint8), 0)
 
-    with tf.Session(graph=detection_graph) as sess:
-        # Actual detection.
-        (boxes, scores, classes) = sess.run([detection_boxes, detection_scores, detection_classes],
-                                            feed_dict={image_tensor: image_np})
+    # Actual detection.
+    (boxes, scores, classes) = sess.run([detection_boxes, detection_scores, detection_classes],
+                                        feed_dict={image_tensor: image_np})
 
-        # Remove unnecessary dimensions
-        boxes = np.squeeze(boxes)
-        scores = np.squeeze(scores)
-        classes = np.squeeze(classes)
+    # Remove unnecessary dimensions
+    boxes = np.squeeze(boxes)
+    scores = np.squeeze(scores)
+    classes = np.squeeze(classes)
 
-        confidence_cutoff = 0.8 # 0.8
-        # Filter boxes with a confidence score less than `confidence_cutoff`
-        boxes, scores, classes = filter_boxes(confidence_cutoff, boxes, scores, classes)
+    confidence_cutoff = 0.8 # 0.8
+    # Filter boxes with a confidence score less than `confidence_cutoff`
+    boxes, scores, classes = filter_boxes(confidence_cutoff, boxes, scores, classes)
 
-        # The current box coordinates are normalized to a range between 0 and 1.
-        # This converts the coordinates actual location on the image.
-        width, height = image.size
-        box_coords = to_image_coords(boxes, height, width)
+    # The current box coordinates are normalized to a range between 0 and 1.
+    # This converts the coordinates actual location on the image.
+    width, height = image.size
+    box_coords = to_image_coords(boxes, height, width)
 
-        # Each class with be represented by a differently colored box
-        image_draw = draw_boxes(image, box_coords, classes, scores)
+    # Each class with be represented by a differently colored box
+    image_draw = draw_boxes(image, box_coords, classes, scores)
 
-        # image_draw.show()
-        save_image_path= image_path[:-4]+"detect.jpg"
-        image_draw.save(save_image_path)
+    # image_draw.show()
+    save_image_path = image_path[:-4] + "_detected.jpg"
+    image_draw.save(save_image_path)

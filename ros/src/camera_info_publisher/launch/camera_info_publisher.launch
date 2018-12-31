@@ -3,17 +3,6 @@
     <node pkg="camera_info_publisher" type="yaml_to_camera_info_publisher.py" name="camera_info_publisher" output="screen" />
     <node pkg="image_proc" type="image_proc" name="image_proc" />
 
-    <!-- Video resizing -->
-    <node pkg="nodelet" type="nodelet" args="standalone image_proc/resize" name="resize_img">        <!-- remap input topics -->
-
-        <!-- remap output topics -->
-    <!--    <remap from="resize_image/image" to="camera_resize/image_rect_color"/>  -->
-        <remap from="resize_image/camera_info" to="camera_resize/camera_info"/>
-    </node>    <!-- Dynamic reconfigure the resizing nodelet -->
-    <node name="$(anon dynparam)" pkg="dynamic_reconfigure" type="dynparam" args="set_from_parameters resize_img">
-        <param name="decimation_x" type="int" value="2" />
-        <param name="decimation_y" type="int" value="3" />
-    </node>
 
 
 </launch>

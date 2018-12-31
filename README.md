@@ -72,3 +72,19 @@ cd CarND-Capstone/ros
 roslaunch launch/site.launch
 ```
 5. Confirm that traffic light detection works on real life images
+
+### TEAM ROSCAR
+
+LEAD: 
+
+Marcus Manning manufacturevn@gmail.com
+
+MEMBERS:
+
+Tatsuo Azeyanagi aze.ryusei@gmail.com
+
+Dániel Simonkay daniel.simonkay@gmail.com
+
+Michael Steinmetz m.steinmetz1987@gmail.com
+
+Sebastian Drynda sebastian@drynda.com
